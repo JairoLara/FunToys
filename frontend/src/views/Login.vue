@@ -21,6 +21,35 @@
 
 </template>
 
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      email: '',
+      password: ''
+    };
+  },
+  methods: {
+    async handleLogin() {
+      try {
+        const response = await axios.post('/login', {
+          email: this.email,
+          contraseña: this.password
+        });
+
+        console.log('Login exitoso', response.data);
+        this.$router.push('/dashboard');
+      } catch (error) {
+        console.error('Error en el login', error);
+        alert('Correo o contraseña incorrectos');
+      }
+    }
+  }
+};
+</script>
+
 <style scoped>
 a {
   color: #007bff;
