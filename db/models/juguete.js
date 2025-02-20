@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      imagen: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
       marcaId: {
         type: DataTypes.INTEGER,
         allowNull: false,
