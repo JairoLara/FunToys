@@ -1,7 +1,7 @@
 import express from 'express';
 const { Usuario } = require('../db/models');
 
-const Product = require('../db/models/marca');    // Usamos require para el modelo de Product
+const {Product} = require('../db/models/marca');    // Usamos require para el modelo de Product
 const Purchase = require('../db/models/juguete'); // Usamos require para el modelo de Purchase
 
 const router = express.Router();
@@ -10,6 +10,22 @@ const router = express.Router();
 
 // Ruta para obtener todos los usuarios
 router.get('/usuarios', async (req, res) => {
+  try {
+    const usuarios = await Usuario.findAll();
+
+    if (usuarios.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron usuarios.' });
+    }
+
+    // Si hay usuarios, devolverlos en la respuesta
+    return res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+    return res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+});
+
+router.get('/productos', async (req, res) => {
   try {
     const usuarios = await Usuario.findAll();
 

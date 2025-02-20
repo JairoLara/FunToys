@@ -24,6 +24,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      imagen: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
       marcaId: {
         type: Sequelize.INTEGER,
         allowNull: false,

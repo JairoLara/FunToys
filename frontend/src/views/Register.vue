@@ -61,7 +61,7 @@ const handleRegister = async () => {
     contraseña.value = '';
 
     // Redirigir al login
-    router.push('/login');
+    router.push('/');
   } catch (error) {
     console.error('Error en el registro', error.response?.data || error);
     alert(error.response?.data?.message || 'Hubo un error al registrarse. Inténtalo de nuevo.');
