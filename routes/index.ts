@@ -1,5 +1,6 @@
 import express from 'express';
-const Usuario = require('../db/models/usuario');  // Usamos require para el modelo de Usuario
+const { Usuario } = require('../db/models');
+
 const Product = require('../db/models/marca');    // Usamos require para el modelo de Product
 const Purchase = require('../db/models/juguete'); // Usamos require para el modelo de Purchase
 
@@ -10,10 +11,8 @@ const router = express.Router();
 // Ruta para obtener todos los usuarios
 router.get('/usuarios', async (req, res) => {
   try {
-    // Obtener todos los usuarios de la base de datos
     const usuarios = await Usuario.findAll();
 
-    // Si no hay usuarios
     if (usuarios.length === 0) {
       return res.status(404).json({ message: 'No se encontraron usuarios.' });
     }
@@ -26,31 +25,52 @@ router.get('/usuarios', async (req, res) => {
   }
 });
 
-// Ruta para agregar productos
-router.post('/products', async (req, res) => {
-  try {
-    const { name, description, price, discount, stock, image } = req.body;
+router.post('/login', async (req, res) => {
+  const { email, contraseña } = req.body;
 
-    if (!name || !description || !price || !stock || !image) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  try {
+    const usuario = await Usuario.findOne({ where: { email } });
+
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
 
-    // Crear el producto en la base de datos
-    const newProduct = await Product.create({
-      name,
-      description,
-      price,
-      discount,
-      stock,
-      image
-    });
+    if (usuario.contraseña !== contraseña) {
+      return res.status(400).json({ success: false, message: 'Contraseña incorrecta' });
+    }
 
-    return res.status(201).json(newProduct); // Enviar el producto creado en la respuesta
+    return res.status(200).json({ success: true, message: 'Login exitoso' });
   } catch (error) {
-    console.error("Error al crear producto:", error); // Detallar el error
-    return res.status(500).json({ error: 'Error al agregar producto' });
+    console.error('Error en el servidor:', error);
+    return res.status(500).json({ success: false, message: 'Error en el servidor', error: error.message });
   }
 });
+
+//registro
+router.post('/register', async (req, res) => {
+  const { nombre, email, contraseña, rol } = req.body;
+
+  try {
+    const usuarioExistente = await Usuario.findOne({ where: { email } });
+
+    if (usuarioExistente) {
+      return res.status(400).json({ success: false, message: 'El correo electrónico ya está registrado' });
+    }
+
+    const nuevoUsuario = await Usuario.create({
+      nombre,
+      email,
+      contraseña,
+      rol
+    });
+
+    return res.status(201).json({ success: true, message: 'Usuario registrado exitosamente', usuario: nuevoUsuario });
+  } catch (error) {
+    console.error('Error al registrar el usuario:', error);
+    return res.status(500).json({ success: false, message: 'Error en el servidor', error: error.message });
+  }
+});
+
 
 // Ruta para actualizar productos
 router.put("/products/:id", async (req, res) => {

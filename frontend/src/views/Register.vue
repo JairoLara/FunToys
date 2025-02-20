@@ -1,49 +1,80 @@
 <template>
-
-  <img src="/src/images/logo_completo_png-removebg-preview.png" alt="">
+  <img src="/src/images/logo_completo_png-removebg-preview.png" alt="Logo">
   <div class="login-container">
-    <h1>Registrate</h1>
+    <h1>Regístrate</h1>
     <hr>
-    <form @submit.prevent="handleLogin">
-
+    <form @submit.prevent="handleRegister">
+      
       <div class="form-group">
-        <label for="name">Nombre:</label>
-        <input placeholder="Introducir nombre" type="text" v-model="name" id="name" required />
+        <label for="nombre">Nombre:</label>
+        <input placeholder="Introducir nombre" type="text" v-model="nombre" id="nombre" required />
       </div>
 
       <div class="form-group">
-        <label for="email">Correo Electronico:</label>
-        <input placeholder="Introducir correo electronico" type="email" v-model="email" id="email" required />
+        <label for="email">Correo Electrónico:</label>
+        <input placeholder="Introducir correo electrónico" type="email" v-model="email" id="email" required />
       </div>
 
       <div class="form-group">
-        <label for="tel">Numero de telefono:</label>
-        <input type="tel" v-model="telefono" placeholder="Ej: 8712619305" @input="validarTelefono" required>
+        <label for="password">Contraseña:</label>
+        <input placeholder="Introducir contraseña" type="password" v-model="contraseña" id="password" required />
+        <p v-if="errorContraseña" class="error-text">La contraseña debe tener al menos 6 caracteres.</p>
       </div>
 
-      <div class="form-group">
-        <label for="password">Contrasena:</label>
-        <input placeholder="Introducir contraseña" type="password" v-model="password" id="password" required />
-      </div>
-
-      <button type="submit">Registrarse</button>
+      <button type="submit" :disabled="deshabilitarBoton">Registrarse</button>
     </form>
     <p><a href="/">¿Ya tienes cuenta?</a></p>
-
   </div>
-
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const telefono = ref('');
-const error = ref(false);
+const nombre = ref('');
+const email = ref('');
+const contraseña = ref('');
+const router = useRouter();
 
-const validarTelefono = () => {
-  telefono.value = telefono.value.replace(/\D/g, ""); // Solo números
-  error.value = /\D/.test(telefono.value); // Verifica si hay letras
+const handleRegister = async () => {
+  // Validaciones antes de enviar
+  if (!nombre.value || !email.value.includes('@') || errorContraseña.value) {
+    alert('Por favor, verifica los datos ingresados.');
+    return;
+  }
+
+  try {
+    const response = await axios.post('http://localhost:7000/api/register', {
+      nombre: nombre.value,
+      email: email.value,
+      contraseña: contraseña.value,
+      rol: 'comprador' // Se puede cambiar según necesidad
+    });
+
+    console.log('Registro exitoso', response.data);
+    alert('Registro exitoso');
+    
+    // Limpieza de campos
+    nombre.value = '';
+    email.value = '';
+    contraseña.value = '';
+
+    // Redirigir al login
+    router.push('/login');
+  } catch (error) {
+    console.error('Error en el registro', error.response?.data || error);
+    alert(error.response?.data?.message || 'Hubo un error al registrarse. Inténtalo de nuevo.');
+  }
 };
+
+// Computed para habilitar/deshabilitar el botón de registro
+const deshabilitarBoton = computed(() => {
+  return !nombre.value || !email.value.includes('@') || errorContraseña.value;
+});
+
+// Verificar si la contraseña es válida
+const errorContraseña = computed(() => contraseña.value.length > 0 && contraseña.value.length < 6);
 </script>
 
 <style scoped>
@@ -55,18 +86,17 @@ a {
   display: flex;
   margin: 0 auto;
   width: 50%;
-
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-h1{
+h1 {
   text-align: center;
 }
 
-hr{
+hr {
   margin-top: 0px;
   margin-bottom: 35px;
 }
@@ -89,7 +119,7 @@ img {
 }
 
 .form-group {
-  margin-bottom: 55px;
+  margin-bottom: 25px;
 }
 
 label {
@@ -128,8 +158,18 @@ button {
   font-size: 18px;
 }
 
-button:hover {
-  background-color: #b86768;
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
 
+button:hover:not(:disabled) {
+  background-color: #b86768;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
 }
 </style>

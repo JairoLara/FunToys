@@ -1,51 +1,53 @@
 <template>
-
   <img src="/src/images/logo_completo_png-removebg-preview.png" alt="">
   <div class="login-container">
-    <h1>Iniciar sesion</h1>
+    <h1>Iniciar Sesión</h1>
     <hr>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="email">Correo Electronico:</label>
-        <input placeholder="Introducir correo electronico" type="email" v-model="email" id="email" required />
+        <label for="email">Correo Electrónico:</label>
+        <input placeholder="Introducir correo electrónico" type="email" v-model="email" id="email" required />
       </div>
+
       <div class="form-group">
-        <label for="password">Contrasena :</label>
-        <input placeholder="Introducir contraseña" type="password" v-model="password" id="password" required />
+        <label for="password">Contraseña:</label>
+        <input placeholder="Introducir contraseña" type="password" v-model="contraseña" id="password" required />
       </div>
-      <button type="submit">Inciar sesion</button>
+
+      <button type="submit">Iniciar Sesión</button>
     </form>
-    <p><a href="/register">¿Aun no tienes cuenta?</a></p>
-
+    <p><a href="/registro">¿No tienes cuenta? Regístrate</a></p>
   </div>
-
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      email: '',
-      password: ''
-    };
-  },
-  methods: {
-    async handleLogin() {
-      try {
-        const response = await axios.post('/login', {
-          email: this.email,
-          contraseña: this.password
-        });
+const email = ref('');
+const contraseña = ref('');
+const router = useRouter();
 
-        console.log('Login exitoso', response.data);
-        this.$router.push('/dashboard');
-      } catch (error) {
-        console.error('Error en el login', error);
-        alert('Correo o contraseña incorrectos');
-      }
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('http://localhost:7000/api/login', {
+      email: email.value,
+      contraseña: contraseña.value
+    });
+
+    console.log('Inicio de sesión exitoso', response.data);
+    alert('Inicio de sesión exitoso');
+
+    // Guardar el token en localStorage si lo devuelve el backend
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
     }
+
+    router.push('/products'); // Redirigir a la página principal después del login
+  } catch (error) {
+    console.error('Error al iniciar sesión', error.response?.data || error);
+    alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
   }
 };
 </script>
@@ -59,18 +61,17 @@ a {
   display: flex;
   margin: 0 auto;
   width: 50%;
-
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-h1{
+h1 {
   text-align: center;
 }
 
-hr{
+hr {
   margin-top: 0px;
   margin-bottom: 35px;
 }
@@ -82,13 +83,14 @@ img {
 }
 
 .login-container {
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ffffff;
   border-radius: 10%;
   background-color: #ffffff;
   font-size: 18px;
+  height: 100%;
 }
 
 .form-group {
@@ -110,6 +112,7 @@ input {
   border: none;
   color: #8A8A8A;
   font-size: 18px;
+  margin-bottom: -10px;
 }
 
 input:focus {
@@ -120,7 +123,6 @@ button {
   display: flex;
   justify-content: center;
   margin: 0 auto;
-
   width: 50%;
   padding: 10px;
   background-color: #FB5355;
@@ -133,6 +135,5 @@ button {
 
 button:hover {
   background-color: #b86768;
-
 }
 </style>
