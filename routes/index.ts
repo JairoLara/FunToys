@@ -1,8 +1,7 @@
 import express from 'express';
-const { Usuario } = require('../db/models');
-
-const {Product} = require('../db/models/marca');    // Usamos require para el modelo de Product
-const Purchase = require('../db/models/juguete'); // Usamos require para el modelo de Purchase
+const {Usuario} = require('../db/models');
+const {Juguete} = require('../db/models'); 
+const {Marca} = require('../db/models')
 
 const router = express.Router();
 
@@ -72,90 +71,37 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.get('/productos', async (req, res) => {
+router.get('/juguetes', async (req, res) => {
   try {
-    const usuarios = await Usuario.findAll();
-
-    if (usuarios.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron usuarios.' });
-    }
-
-    // Si hay usuarios, devolverlos en la respuesta
-    return res.json(usuarios);
-  } catch (error) {
-    console.error('Error al obtener los usuarios:', error);
-    return res.status(500).json({ message: 'Error al obtener los usuarios' });
-  }
-});
-
-// Ruta para actualizar productos
-router.put("/products/:id", async (req, res) => {
-  const productId = req.params.id;
-  const { name, description, price, discount, stock, image } = req.body;
-  
-  console.log("ID recibido:", productId); // Para verificar el ID
-  console.log("Datos recibidos:", req.body); // Para verificar los datos
-  
-  try {
-    const product = await Product.findByPk(productId);
-    
-    if (!product) {
-      return res.status(404).json({ message: "Producto no encontrado" });
-    }
-    
-    const updatedProduct = await product.update({
-      name,
-      description,
-      price,
-      discount,
-      stock,
-      image,
+    const juguetes = await Juguete.findAll({
+      include: {
+        model: Marca,
+        as: 'marca',
+        attributes: ['nombre'], // Solo traemos el nombre de la marca
+      },
     });
-    
-    res.json(updatedProduct);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al actualizar el producto" });
-  }
-});
 
-// Ruta para eliminar productos
-router.delete("/products/:id", async (req, res) => {
-  const productId = req.params.id;
-  
-  try {
-    // Buscar el producto por ID
-    const product = await Product.findByPk(productId);
-
-    if (!product) {
-      return res.status(404).json({ message: "Producto no encontrado" });
+    if (juguetes.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron juguetes.' });
     }
 
-    // Eliminar el producto
-    await product.destroy();
+    // Reformateamos la respuesta para mostrar el nombre de la marca en lugar del ID
+    const juguetesFormateados = juguetes.map(juguete => ({
+      id: juguete.id,
+      nombre: juguete.nombre,
+      descripcion: juguete.descripcion,
+      precio: juguete.precio,
+      stock: juguete.stock,
+      imagen: juguete.imagen,
+      marca: juguete.marca ? juguete.marca.nombre : null, // Verificamos si la marca existe
+      createdAt: juguete.createdAt,
+      updatedAt: juguete.updatedAt
+    }));
 
-    // Devolver una respuesta exitosa
-    res.json({ message: "Producto eliminado correctamente" });
+    return res.json(juguetesFormateados);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al eliminar el producto" });
-  }
-});
-
-// Ruta para actualizar compras
-router.put('/purchases/:id', async (req, res) => {
-  const { id } = req.params;
-  const { userId, productId, quantity } = req.body;
-  try {
-    const purchaseToUpdate = await Purchase.findByPk(id);
-    if (purchaseToUpdate) {
-      await purchaseToUpdate.update({ userId, productId, quantity });
-      res.status(200).json(purchaseToUpdate);
-    } else {
-      res.status(404).json({ message: 'Purchase not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating purchase', error });
+    console.error('Error al obtener los juguetes:', error);
+    return res.status(500).json({ message: 'Error al obtener los juguetes' });
   }
 });
 
