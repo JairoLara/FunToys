@@ -70,14 +70,14 @@ router.post('/register', async (req, res) => {
     return res.status(500).json({ success: false, message: 'Error en el servidor', error: error.message });
   }
 });
-
+// Jugueets
 router.get('/juguetes', async (req, res) => {
   try {
     const juguetes = await Juguete.findAll({
       include: {
         model: Marca,
         as: 'marca',
-        attributes: ['nombre'], // Solo traemos el nombre de la marca
+        attributes: ['nombre'], 
       },
     });
 
@@ -85,20 +85,20 @@ router.get('/juguetes', async (req, res) => {
       return res.status(404).json({ message: 'No se encontraron juguetes.' });
     }
 
-    // Reformateamos la respuesta para mostrar el nombre de la marca en lugar del ID
-    const juguetesFormateados = juguetes.map(juguete => ({
+    
+    const juguetess = juguetes.map(juguete => ({
       id: juguete.id,
       nombre: juguete.nombre,
       descripcion: juguete.descripcion,
       precio: juguete.precio,
       stock: juguete.stock,
       imagen: juguete.imagen,
-      marca: juguete.marca ? juguete.marca.nombre : null, // Verificamos si la marca existe
+      marca: juguete.marca ? juguete.marca.nombre : null, 
       createdAt: juguete.createdAt,
       updatedAt: juguete.updatedAt
     }));
 
-    return res.json(juguetesFormateados);
+    return res.json(juguetess);
   } catch (error) {
     console.error('Error al obtener los juguetes:', error);
     return res.status(500).json({ message: 'Error al obtener los juguetes' });

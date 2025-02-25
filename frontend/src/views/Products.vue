@@ -1,206 +1,228 @@
 <template>
-    <div class="productos-container">
-      <!-- Sección de Ofertas -->
-      <h1 class="titulo">Ofertas</h1>
-      <div class="productos-wrapper">
-        <button @click="scrollLeft('descuento')" class="scroll-btn left"><</button>
-  
-        <div ref="productosConDescuentoContainer" class="productos-grid">
-          <div v-for="producto in productosConDescuento" :key="producto.id" class="producto-card">
-            <div class="imagen-container">
-              <img :src="producto.imagen" :alt="producto.nombre" />
-            </div>
-            <h3 class="nombre">{{ producto.nombre }}</h3>
-            <p class="precio">
-              Precio: <span class="precio-normal">${{ producto.precio }}</span>
-              <span class="precio-descuento">${{ producto.precio - (producto.precio * producto.descuento) / 100 }}</span>
-            </p>
-            <p class="descuento">Descuento: {{ producto.descuento }}%</p>
-          </div>
+  <!-- Carrusel Ofertas -->
+  <div class="carousel-container">
+    <h2 style="text-align: start;">Ofertas</h2>
+    <button class="arrow left" @click="scrollLeft('ofertaCarousel')">❮</button>
+    <div class="carousel-wrapper">
+      <div class="carousel" ref="ofertaCarousel" @scroll="updateScroll('ofertaCarousel')">
+        <div v-for="juguete in juguetesEnOferta" :key="juguete.id" class="carousel-item">
+          <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
+          <h3>{{ juguete.nombre }}</h3>
+          <p class="precio oferta">Oferta: ${{ juguete.precio }}</p>
         </div>
-  
-        <button @click="scrollRight('descuento')" class="scroll-btn right">></button>
       </div>
-  
-      <!-- Sección de Productos Sin Descuento -->
-      <h1 class="titulo">Destacados</h1>
-      <div class="productos-wrapper">
-        <button @click="scrollLeft('sinDescuento')" class="scroll-btn left"><</button>
-  
-        <div ref="productosSinDescuentoContainer" class="productos-grid">
-          <div v-for="producto in productosSinDescuento" :key="producto.id" class="producto-card">
-            <div class="imagen-container">
-              <img :src="producto.imagen" :alt="producto.nombre" />
-            </div>
-            <h3 class="nombre">{{ producto.nombre }}</h3>
-            <p class="precio">Precio: ${{ producto.precio }}</p>
-          </div>
-        </div>
-  
-        <button @click="scrollRight('sinDescuento')" class="scroll-btn right">></button>
-      </div>
+      <div class="scroll-bar" ref="ofertaScrollBar" @mousedown="startDrag('ofertaCarousel', $event)"></div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  
-  // Productos con descuento
-  const productosConDescuento = ref([
-    { id: 1, nombre: 'Producto 1', precio: 100, descuento: 10, imagen: 'https://via.placeholder.com/150' },
-    { id: 2, nombre: 'Producto 2', precio: 200, descuento: 15, imagen: 'https://via.placeholder.com/150' },
-    { id: 3, nombre: 'Producto 3', precio: 300, descuento: 20, imagen: 'https://via.placeholder.com/150' },
-    { id: 4, nombre: 'Producto 4', precio: 400, descuento: 25, imagen: 'https://via.placeholder.com/150' },
-    { id: 5, nombre: 'Producto 5', precio: 500, descuento: 25, imagen: 'https://via.placeholder.com/150' },
-    { id: 6, nombre: 'Producto 6', precio: 600, descuento: 25, imagen: 'https://via.placeholder.com/150' },
-    { id: 7, nombre: 'Producto 7', precio: 700, descuento: 25, imagen: 'https://via.placeholder.com/150' },
-    { id: 8, nombre: 'Producto 8', precio: 800, descuento: 25, imagen: 'https://via.placeholder.com/150' },
-  ])
-  
-  // Productos sin descuento
-  const productosSinDescuento = ref([
-    { id: 9, nombre: 'Producto 1', precio: 100, imagen: 'https://via.placeholder.com/150' },
-    { id: 10, nombre: 'Producto 2', precio: 200, imagen: 'https://via.placeholder.com/150' },
-    { id: 11, nombre: 'Producto 3', precio: 300, imagen: 'https://via.placeholder.com/150' },
-    { id: 12, nombre: 'Producto 4', precio: 400, imagen: 'https://via.placeholder.com/150' },
-    { id: 13, nombre: 'Producto 5', precio: 500, imagen: 'https://via.placeholder.com/150' },
-    { id: 14, nombre: 'Producto 6', precio: 600, imagen: 'https://via.placeholder.com/150' },
-    { id: 15, nombre: 'Producto 7', precio: 700, imagen: 'https://via.placeholder.com/150' },
-    { id: 16, nombre: 'Producto 8', precio: 800, imagen: 'https://via.placeholder.com/150' },
-  ])
-  
-  // Refs para manejar el scroll de cada carrusel
-  const productosConDescuentoContainer = ref(null)
-  const productosSinDescuentoContainer = ref(null)
-  
-  // Función para desplazar el carrusel a la izquierda
-  const scrollLeft = (tipo) => {
-    if (tipo === 'descuento' && productosConDescuentoContainer.value) {
-      productosConDescuentoContainer.value.scrollLeft -= 220
-    } else if (tipo === 'sinDescuento' && productosSinDescuentoContainer.value) {
-      productosSinDescuentoContainer.value.scrollLeft -= 220
-    }
-  }
-  
-  // Función para desplazar el carrusel a la derecha
-  const scrollRight = (tipo) => {
-    if (tipo === 'descuento' && productosConDescuentoContainer.value) {
-      productosConDescuentoContainer.value.scrollLeft += 220
-    } else if (tipo === 'sinDescuento' && productosSinDescuentoContainer.value) {
-      productosSinDescuentoContainer.value.scrollLeft += 220
-    }
-  }
-  </script>
+    <button class="arrow right" @click="scrollRight('ofertaCarousel')">❯</button>
+  </div>
+
+  <!-- Carrusel Productos -->
+  <div class="carousel-container">
+    <h2>Productos</h2>
+    <button class="arrow left" @click="scrollLeft('productosCarousel')">❮</button>
+    <div class="carousel-wrapper">
+      <div class="carousel" ref="productosCarousel" @scroll="updateScroll('productosCarousel')">
+        <div v-for="juguete in juguetes" :key="juguete.id" class="carousel-item">
+          <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
+          <h3>{{ juguete.nombre }}</h3>
+          <span class="precio">Precio: ${{ juguete.precio }}</span>
+        </div>
+      </div>
+      <div class="scroll-bar" ref="productosScrollBar" @mousedown="startDrag('productosCarousel', $event)"></div>
+    </div>
+    <button class="arrow right" @click="scrollRight('productosCarousel')">❯</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+
+interface Juguete {
+id: number;
+nombre: string;
+precio: number;
+imagen: string;
+}
+
+const juguetes = ref<Juguete[]>([]);
+const juguetesEnOferta = ref<Juguete[]>([]);
+const ofertaCarousel = ref<HTMLElement | null>(null);
+const productosCarousel = ref<HTMLElement | null>(null);
+const ofertaScrollBar = ref<HTMLElement | null>(null);
+const productosScrollBar = ref<HTMLElement | null>(null);
+let isDragging = false;
+let startX = 0;
+let scrollLeftStart = 0;
+
+onMounted(async () => {
+try {
+  const response = await fetch("http://localhost:7000/api/juguetes");
+  if (!response.ok) throw new Error("No se pudo obtener la lista de juguetes");
+  const data = await response.json();
+  juguetes.value = data;
+  juguetesEnOferta.value = seleccionarAleatorios(data, 5);
+} catch (err) {
+  console.error(err);
+}
+});
+
+const seleccionarAleatorios = (lista: Juguete[], cantidad: number) => {
+return lista.sort(() => 0.5 - Math.random()).slice(0, cantidad);
+};
+
+const scrollLeft = (carouselRef: string) => {
+const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+if (carousel) {
+  carousel.scrollBy({ left: -250, behavior: "smooth" });
+}
+};
+
+const scrollRight = (carouselRef: string) => {
+const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+if (carousel) {
+  carousel.scrollBy({ left: 250, behavior: "smooth" });
+}
+};
+
+const updateScroll = (carouselRef: string) => {
+const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+const scrollBar = carouselRef === "ofertaCarousel" ? ofertaScrollBar.value : productosScrollBar.value;
+
+if (carousel && scrollBar) {
+  const scrollPercentage = carousel.scrollLeft / (carousel.scrollWidth - carousel.clientWidth);
+  scrollBar.style.left = `${scrollPercentage * 100}%`;
+}
+};
+
+const startDrag = (carouselRef: string, event: MouseEvent) => {
+isDragging = true;
+startX = event.clientX;
+const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+if (carousel) {
+  scrollLeftStart = carousel.scrollLeft;
+  document.addEventListener("mousemove", (e) => onDrag(e, carousel));
+  document.addEventListener("mouseup", stopDrag);
+}
+};
+
+const onDrag = (event: MouseEvent, carousel: HTMLElement) => {
+if (!isDragging) return;
+const moveX = event.clientX - startX;
+carousel.scrollLeft = scrollLeftStart - moveX;
+};
+
+const stopDrag = () => {
+isDragging = false;
+document.removeEventListener("mousemove", onDrag as any);
+document.removeEventListener("mouseup", stopDrag);
+};
+</script>
 
 <style scoped>
-.titulo {
-  color: #ce3d3d;
-  text-align: start;
+h2 {
+font-size: 20px;
+margin-bottom: 10px;
 }
 
-.productos-container {
-  text-align: center;
-  padding: 20px;
-  background-color: #ffeda1;
+/* Contenedor del carrusel */
+.carousel-container {
+position: relative;
+margin: 20px 0;
+overflow: hidden;
+padding: 10px;
 }
 
-.productos-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  max-width: 1420px;
-  margin: auto;
+.carousel-wrapper {
+position: relative;
+padding-bottom: 20px; /* Espacio para la barra */
 }
 
-.productos-grid {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  width: 1400px;
-  white-space: nowrap;
-  padding: 10px;
+/* Carrusel */
+.carousel {
+display: flex;
+overflow-x: auto;
+scroll-behavior: smooth;
+gap: 15px;
+padding: 10px;
 }
 
-.productos-grid::-webkit-scrollbar {
-  display: none;
+.carousel::-webkit-scrollbar {
+display: none;
 }
 
-.producto-card {
-  flex: 0 0 auto;
-  width: 200px;
-  padding: 15px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+/* Elementos */
+.carousel-item {
+min-width: 200px;
+background: #fff;
+padding: 15px;
+border-radius: 8px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+text-align: center;
 }
 
-.imagen-container {
-  width: 100%;
-  height: 150px;
-  background-color: #f8f8f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  margin-bottom: 10px;
+.imagen {
+width: 100%;
+height: 150px;
+object-fit: cover;
+border-radius: 5px;
 }
 
-.imagen-container img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.nombre {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 5px 0;
+h3 {
+font-size: 18px;
+margin: 10px 0;
 }
 
 .precio {
-  font-size: 14px;
-  color: #333;
+font-weight: bold;
+color: #28a745;
 }
 
-.precio-normal {
-  text-decoration: line-through;
-  color: #888;
-  margin-right: 5px;
+.oferta {
+color: red;
+text-decoration: line-through;
 }
 
-.precio-descuento {
-  color: #ce3d3d;
-  font-weight: bold;
+/* Botones de navegación */
+.arrow {
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+background: rgba(0, 0, 0, 0.5);
+color: white;
+border: none;
+font-size: 20px;
+padding: 10px 15px;
+cursor: pointer;
+border-radius: 50%;
+z-index: 10;
 }
 
-.descuento {
-  font-size: 14px;
-  color: green;
+.arrow.left {
+left: 5px;
 }
 
-.scroll-btn {
-  color: black;
-  background-color: #ffeda1;
-  border: none;
-  padding: 10px 15px;
-  font-size: 20px;
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  z-index: 10;
+.arrow.right {
+right: 5px;
 }
 
-.left {
-  left: -40px;
+.arrow:hover {
+background: rgba(0, 0, 0, 0.8);
 }
 
-.right {
-  right: -40px;
+/* Barra de desplazamiento personalizada */
+.scroll-bar {
+position: absolute;
+bottom: 5px;
+left: 0;
+width: 30px;
+height: 8px;
+background: #888;
+border-radius: 5px;
+cursor: pointer;
+transition: background 0.3s;
+}
+
+.scroll-bar:hover {
+background: #555;
 }
 </style>
-  
