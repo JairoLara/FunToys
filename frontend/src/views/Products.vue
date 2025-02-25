@@ -119,6 +119,15 @@ document.removeEventListener("mouseup", stopDrag);
 </script>
 
 <style scoped>
+h3 {
+  font-size: 18px;
+  margin: 10px 0;
+  white-space: nowrap; /* Evita que el texto se desborde en varias líneas */
+  overflow: hidden; /* Oculta el texto que sobrepasa el contenedor */
+  text-overflow:clip; /* Agrega los tres puntos (...) al final */
+  max-width: 180px; /* Ajusta el ancho máximo según tu diseño */
+}
+
 h2 {
 font-size: 20px;
 margin-bottom: 10px;
@@ -162,8 +171,7 @@ text-align: center;
 
 .imagen {
 width: 100%;
-height: 150px;
-object-fit: cover;
+height: 220px;
 border-radius: 5px;
 }
 
