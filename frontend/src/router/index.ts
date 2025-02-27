@@ -3,6 +3,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Products from '@/views/Products.vue'
 import Pago from '@/views/pago.vue'
+import Footer from '@/components/footer.vue'
 
 
 const router = createRouter({
@@ -28,6 +29,11 @@ const router = createRouter({
       path : '/pay',
       name : 'pay',
       component : Pago
+    },
+    {
+      path : '/footer',
+      name : 'footer',
+      component : Footer
     }
   ],
 })

@@ -32,16 +32,19 @@
     </div>
     <button class="arrow right" @click="scrollRight('productosCarousel')">❯</button>
   </div>
+
+  <Footer />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import Footer from "@/components/footer.vue";
 
 interface Juguete {
-id: number;
-nombre: string;
-precio: number;
-imagen: string;
+  id: number;
+  nombre: string;
+  precio: number;
+  imagen: string;
 }
 
 const juguetes = ref<Juguete[]>([]);
@@ -55,68 +58,69 @@ let startX = 0;
 let scrollLeftStart = 0;
 
 onMounted(async () => {
-try {
-  const response = await fetch("http://localhost:7000/api/juguetes");
-  if (!response.ok) throw new Error("No se pudo obtener la lista de juguetes");
-  const data = await response.json();
-  juguetes.value = data;
-  juguetesEnOferta.value = seleccionarAleatorios(data, 5);
-} catch (err) {
-  console.error(err);
-}
+  try {
+    const response = await fetch("http://localhost:7000/api/juguetes");
+    if (!response.ok) throw new Error("No se pudo obtener la lista de juguetes");
+    const data = await response.json();
+    juguetes.value = data;
+    juguetesEnOferta.value = seleccionarAleatorios(data, 5);
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 const seleccionarAleatorios = (lista: Juguete[], cantidad: number) => {
-return lista.sort(() => 0.5 - Math.random()).slice(0, cantidad);
+  return lista.sort(() => 0.5 - Math.random()).slice(0, cantidad);
 };
 
 const scrollLeft = (carouselRef: string) => {
-const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
-if (carousel) {
-  carousel.scrollBy({ left: -250, behavior: "smooth" });
-}
+  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  if (carousel) {
+    carousel.scrollBy({ left: -250, behavior: "smooth" });
+  }
 };
 
 const scrollRight = (carouselRef: string) => {
-const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
-if (carousel) {
-  carousel.scrollBy({ left: 250, behavior: "smooth" });
-}
+  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  if (carousel) {
+    carousel.scrollBy({ left: 250, behavior: "smooth" });
+  }
 };
 
 const updateScroll = (carouselRef: string) => {
-const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
-const scrollBar = carouselRef === "ofertaCarousel" ? ofertaScrollBar.value : productosScrollBar.value;
+  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  const scrollBar = carouselRef === "ofertaCarousel" ? ofertaScrollBar.value : productosScrollBar.value;
 
-if (carousel && scrollBar) {
-  const scrollPercentage = carousel.scrollLeft / (carousel.scrollWidth - carousel.clientWidth);
-  scrollBar.style.left = `${scrollPercentage * 100}%`;
-}
+  if (carousel && scrollBar) {
+    const scrollPercentage = carousel.scrollLeft / (carousel.scrollWidth - carousel.clientWidth);
+    scrollBar.style.left = `${scrollPercentage * 100}%`;
+  }
 };
 
 const startDrag = (carouselRef: string, event: MouseEvent) => {
-isDragging = true;
-startX = event.clientX;
-const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
-if (carousel) {
-  scrollLeftStart = carousel.scrollLeft;
-  document.addEventListener("mousemove", (e) => onDrag(e, carousel));
-  document.addEventListener("mouseup", stopDrag);
-}
+  isDragging = true;
+  startX = event.clientX;
+  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  if (carousel) {
+    scrollLeftStart = carousel.scrollLeft;
+    document.addEventListener("mousemove", (e) => onDrag(e, carousel));
+    document.addEventListener("mouseup", stopDrag);
+  }
 };
 
 const onDrag = (event: MouseEvent, carousel: HTMLElement) => {
-if (!isDragging) return;
-const moveX = event.clientX - startX;
-carousel.scrollLeft = scrollLeftStart - moveX;
+  if (!isDragging) return;
+  const moveX = event.clientX - startX;
+  carousel.scrollLeft = scrollLeftStart - moveX;
 };
 
 const stopDrag = () => {
-isDragging = false;
-document.removeEventListener("mousemove", onDrag as any);
-document.removeEventListener("mouseup", stopDrag);
+  isDragging = false;
+  document.removeEventListener("mousemove", onDrag as any);
+  document.removeEventListener("mouseup", stopDrag);
 };
 </script>
+
 
 <style scoped>
 h3 {
