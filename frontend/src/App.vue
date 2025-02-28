@@ -8,7 +8,7 @@
 <style>
 body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  margin-top: 10px;
   background-color: #FFEDA1;
+  margin: 0%;
 }
 </style>

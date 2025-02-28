@@ -5,7 +5,7 @@
     <button class="arrow left" @click="scrollLeft('ofertaCarousel')">❮</button>
     <div class="carousel-wrapper">
       <div class="carousel" ref="ofertaCarousel" @scroll="updateScroll('ofertaCarousel')">
-        <div v-for="juguete in juguetesEnOferta" :key="juguete.id" class="carousel-item">
+        <div v-for="juguete in juguetesEnOferta" :key="juguete.id" class="carousel-item" @click="iradetalle(juguete.id)">
           <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
           <h3>{{ juguete.nombre }}</h3>
           <p class="precio oferta">Oferta: ${{ juguete.precio }}</p>
@@ -22,7 +22,7 @@
     <button class="arrow left" @click="scrollLeft('productosCarousel')">❮</button>
     <div class="carousel-wrapper">
       <div class="carousel" ref="productosCarousel" @scroll="updateScroll('productosCarousel')">
-        <div v-for="juguete in juguetes" :key="juguete.id" class="carousel-item">
+        <div v-for="juguete in juguetes" :key="juguete.id" class="carousel-item" @click="iradetalle(juguete.id)">
           <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
           <h3>{{ juguete.nombre }}</h3>
           <span class="precio">Precio: ${{ juguete.precio }}</span>
@@ -37,6 +37,8 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+const router = useRouter();
 import { ref, onMounted } from "vue";
 import Footer from "@/components/footer.vue";
 
@@ -64,7 +66,6 @@ onMounted(async () => {
     const data = await response.json();
     juguetes.value = data;
 
-    // Verificar si ya hay una selección guardada en localStorage
     const ofertasGuardadas = localStorage.getItem("juguetesEnOferta");
     if (ofertasGuardadas) {
       juguetesEnOferta.value = JSON.parse(ofertasGuardadas);
@@ -78,11 +79,13 @@ onMounted(async () => {
   }
 });
 
-// Selecciona siempre los mismos juguetes en base a su ID ordenada
 const seleccionarDeterminados = (lista: Juguete[], cantidad: number) => {
   return lista.slice().sort((a, b) => a.id - b.id).slice(0, cantidad);
 };
 
+const iradetalle = (id: number) => {
+  router.push(`/product/${id}`);
+};
 
 const scrollLeft = (carouselRef: string) => {
   const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
@@ -137,10 +140,10 @@ const stopDrag = () => {
 h3 {
   font-size: 18px;
   margin: 10px 0;
-  white-space: nowrap; /* Evita que el texto se desborde en varias líneas */
-  overflow: hidden; /* Oculta el texto que sobrepasa el contenedor */
-  text-overflow:clip; /* Agrega los tres puntos (...) al final */
-  max-width: 180px; /* Ajusta el ancho máximo según tu diseño */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow:clip; 
+  max-width: 180px; 
 }
 
 h2 {
@@ -148,7 +151,6 @@ font-size: 20px;
 margin-bottom: 10px;
 }
 
-/* Contenedor del carrusel */
 .carousel-container {
 position: relative;
 margin: 20px 0;
@@ -158,7 +160,7 @@ padding: 10px;
 
 .carousel-wrapper {
 position: relative;
-padding-bottom: 20px; /* Espacio para la barra */
+padding-bottom: 20px; 
 }
 
 /* Carrusel */
@@ -188,6 +190,7 @@ text-align: center;
 width: 100%;
 height: 220px;
 border-radius: 5px;
+cursor: pointer;
 }
 
 h3 {
@@ -205,7 +208,7 @@ color: red;
 text-decoration: line-through;
 }
 
-/* Botones de navegación */
+/* Botones de carr */
 .arrow {
 position: absolute;
 top: 50%;
@@ -232,7 +235,7 @@ right: 5px;
 background: rgba(0, 0, 0, 0.8);
 }
 
-/* Barra de desplazamiento personalizada */
+/* Barra de aabajo */
 .scroll-bar {
 position: absolute;
 bottom: 5px;
