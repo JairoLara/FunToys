@@ -63,15 +63,26 @@ onMounted(async () => {
     if (!response.ok) throw new Error("No se pudo obtener la lista de juguetes");
     const data = await response.json();
     juguetes.value = data;
-    juguetesEnOferta.value = seleccionarAleatorios(data, 5);
+
+    // Verificar si ya hay una selección guardada en localStorage
+    const ofertasGuardadas = localStorage.getItem("juguetesEnOferta");
+    if (ofertasGuardadas) {
+      juguetesEnOferta.value = JSON.parse(ofertasGuardadas);
+    } else {
+      const seleccionados = seleccionarDeterminados(data, 5);
+      juguetesEnOferta.value = seleccionados;
+      localStorage.setItem("juguetesEnOferta", JSON.stringify(seleccionados));
+    }
   } catch (err) {
     console.error(err);
   }
 });
 
-const seleccionarAleatorios = (lista: Juguete[], cantidad: number) => {
-  return lista.sort(() => 0.5 - Math.random()).slice(0, cantidad);
+// Selecciona siempre los mismos juguetes en base a su ID ordenada
+const seleccionarDeterminados = (lista: Juguete[], cantidad: number) => {
+  return lista.slice().sort((a, b) => a.id - b.id).slice(0, cantidad);
 };
+
 
 const scrollLeft = (carouselRef: string) => {
   const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
