@@ -1,4 +1,5 @@
 <template>
+  <NavBar />
   <!-- Carrusel Ofertas -->
   <div class="carousel-container">
     <h2 style="text-align: start;">Ofertas</h2>
@@ -41,6 +42,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 import { ref, onMounted } from "vue";
 import Footer from "@/components/footer.vue";
+import NavBar from '@/components/NavBar.vue';
 
 interface Juguete {
   id: number;
@@ -140,10 +142,10 @@ const stopDrag = () => {
 h3 {
   font-size: 18px;
   margin: 10px 0;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow:clip; 
-  max-width: 180px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:clip;
+  max-width: 180px;
 }
 
 h2 {
@@ -160,7 +162,7 @@ padding: 10px;
 
 .carousel-wrapper {
 position: relative;
-padding-bottom: 20px; 
+padding-bottom: 20px;
 }
 
 /* Carrusel */
