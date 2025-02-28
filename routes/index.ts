@@ -24,6 +24,23 @@ router.get('/usuarios', async (req, res) => {
   }
 });
 
+//obtener marcas
+
+router.get('/marca', async (req, res) => {
+  try {
+    const marca = await Marca.findAll();
+
+    if (marca.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron usuarios.' });
+    }
+
+    // Si hay marcas, devolverlos en la respuesta
+    return res.json(marca);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+    return res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+});
 
 router.post('/login', async (req, res) => {
   const { email, contraseña } = req.body;
