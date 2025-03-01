@@ -6,43 +6,43 @@ module.exports = {
   up: async (queryInterface) => {
     await queryInterface.bulkInsert('marcas', [
       { nombre: 'Lego', 
-        imagen: 'src/lego-min 1.png' ,
+        imagen: 'https://www.edigitalagency.com.au/wp-content/uploads/lego-logo-png-transparent-background.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
         
       },
       { nombre: 'Hotwheels', 
-        imagen: 'src/Hot-Wheels-Logo.png' ,
+        imagen: 'https://1000marcas.net/wp-content/uploads/2020/11/Hot-Wheels-Logo.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'Megablock',
-        imagen: 'src/Mega_Logo 1.png' ,
+        imagen: 'https://mir-s3-cdn-cf.behance.net/projects/404/46c83f113752763.Y3JvcCw4MDgsNjMyLDAsMA.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'Barbie', 
-        imagen: 'src/Logo_barbie.png' ,
+        imagen: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Logo_barbie.png/1024px-Logo_barbie.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'UNO', 
-        imagen: 'src/UNO.png' ,
+        imagen: 'https://cdn.freelogovectors.net/wp-content/uploads/2022/03/uno-logo_freelogovectors.net_.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'Transformers', 
-        imagen: 'src/Transformers.png' ,
+        imagen: 'https://1000marcas.net/wp-content/uploads/2020/03/logo-Transformers.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'Monster High', 
-        imagen: 'src/monster_high_logo_by_rikorocky_d8768wi-fullview.png' ,
+        imagen: 'https://1000logos.net/wp-content/uploads/2020/11/Monster-High-logo.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
       { nombre: 'Roblox', 
-        imagen: 'src/image 4.png' ,
+        imagen: 'https://download.logo.wine/logo/Roblox/Roblox-Logo.wine.png' ,
         createdAt: new Date(), 
         updatedAt: new Date() 
       }

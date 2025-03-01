@@ -133,7 +133,6 @@ const agregarAlCarrito = () => {
   background-color: #1f578e;
   padding: 10px;
   width: 100px;
-  border-color: ;
 }
 
 .contador button {

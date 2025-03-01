@@ -122,4 +122,31 @@ router.get('/juguetes', async (req, res) => {
   }
 });
 
+// Obtener productos de una marca específica
+router.get('/:id/juguetes', async (req, res) => {
+  try {
+      const { id } = req.params;
+      
+      // Buscar la marca y sus productos
+      const marca = await Marca.findByPk(id, {
+          include: { model: Juguete, as: 'juguetes' }
+      });
+
+      if (!marca) {
+          return res.status(404).json({ message: 'Marca no encontrada' });
+      }
+
+      res.json({
+          id: marca.id,
+          nombre: marca.nombre,
+          imagen: marca.imagen,
+          productos: marca.juguetes
+      });
+  } catch (error) {
+      console.error('Error al obtener productos de la marca:', error);
+      res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
+
 export default router;

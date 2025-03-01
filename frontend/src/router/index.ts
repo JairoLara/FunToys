@@ -4,6 +4,7 @@ import Register from '../views/Register.vue'
 import Products from '@/views/Products.vue'
 import Pago from '@/views/pago.vue'
 import Product from '@/views/Product.vue'
+import ProductoMarca from '@/views/ProductoMarca.vue'
 
 
 const router = createRouter({
@@ -34,6 +35,12 @@ const router = createRouter({
       path : '/product/:id',
       name : 'product',
       component : Product
+    },
+    {
+      path: '/producto-marca/:id',
+      name: 'ProductoMarca',
+      component: ProductoMarca,
+      props: true 
     }
   ],
 })

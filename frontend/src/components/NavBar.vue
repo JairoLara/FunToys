@@ -174,7 +174,7 @@ button {
   list-style: none;
   padding: 5px;
   margin: 0;
-  z-index: 10;
+  z-index: 3000;
 }
 
 .juguete-imagen {
