@@ -77,6 +77,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    cursor: pointer;
   }
   
   .marcas-grid {

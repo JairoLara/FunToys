@@ -5,6 +5,7 @@ import Products from '@/views/Products.vue'
 import Pago from '@/views/pago.vue'
 import Product from '@/views/Product.vue'
 import ProductoMarca from '@/views/ProductoMarca.vue'
+import Favoritos from '@/views/Favoritos.vue'
 
 
 const router = createRouter({
@@ -41,7 +42,12 @@ const router = createRouter({
       name: 'ProductoMarca',
       component: ProductoMarca,
       props: true 
-    }
+    },
+    {
+      path : '/favoritos',
+      name : 'favoritos',
+      component : Favoritos
+    },
   ],
 })
 
