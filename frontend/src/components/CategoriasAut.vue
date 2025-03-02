@@ -47,7 +47,7 @@ const iniciarCarrusel = () => {
         intervalo = setInterval(() => {
             if (direccion === "derecha") {
                 carruselRef.value!.scrollLeft += 1;
-                if (carruselRef.value!.scrollLeft >= carruselRef.value!.scrollWidth / 10) {
+                if (carruselRef.value!.scrollLeft >= carruselRef.value!.scrollWidth / 20) {
                     direccion = "izquierda";
                 }
             } else {
@@ -56,7 +56,7 @@ const iniciarCarrusel = () => {
                     direccion = "derecha";
                 }
             }
-        }, 10);
+        }, 20);
     }
 };
 
@@ -99,8 +99,8 @@ onMounted(() => {
 }
 
 .marca {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     background: linear-gradient(45deg, #ff6b6b, #6b6bff);
     box-shadow: rgba(0, 0, 0, 0.4) 0px 5px 10px;
