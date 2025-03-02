@@ -4,7 +4,7 @@
     <h1>Regístrate</h1>
     <hr>
     <form @submit.prevent="handleRegister">
-      
+
       <div class="form-group">
         <label for="nombre">Nombre:</label>
         <input placeholder="Introducir nombre" type="text" v-model="nombre" id="nombre" required />
@@ -31,6 +31,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 const nombre = ref('');
 const email = ref('');
@@ -38,9 +39,12 @@ const contraseña = ref('');
 const router = useRouter();
 
 const handleRegister = async () => {
-  // Validaciones antes de enviar
   if (!nombre.value || !email.value.includes('@') || errorContraseña.value) {
-    alert('Por favor, verifica los datos ingresados.');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      text: 'Por favor, verifica los datos ingresados.',
+    });
     return;
   }
 
@@ -49,33 +53,40 @@ const handleRegister = async () => {
       nombre: nombre.value,
       email: email.value,
       contraseña: contraseña.value,
-      rol: 'comprador' // Se puede cambiar según necesidad
+      rol: 'comprador'
     });
 
     console.log('Registro exitoso', response.data);
-    alert('Registro exitoso');
-    
-    // Limpieza de campos
-    nombre.value = '';
-    email.value = '';
-    contraseña.value = '';
 
-    // Redirigir al login
-    router.push('/');
+    Swal.fire({
+      icon: 'success',
+      title: '¡Registro Exitoso!',
+      text: `Bienvenido, ${nombre.value}. Tu cuenta ha sido creada con éxito.`,
+      confirmButtonColor: '#FB5355',
+    }).then(() => {
+      nombre.value = '';
+      email.value = '';
+      contraseña.value = '';
+      router.push('/');
+    });
+
   } catch (error) {
     console.error('Error en el registro', error.response?.data || error);
-    alert(error.response?.data?.message || 'Hubo un error al registrarse. Inténtalo de nuevo.');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.response?.data?.message || 'Hubo un problema al registrarse. Inténtalo de nuevo.',
+    });
   }
 };
 
-// Computed para habilitar/deshabilitar el botón de registro
 const deshabilitarBoton = computed(() => {
   return !nombre.value || !email.value.includes('@') || errorContraseña.value;
 });
 
-// Verificar si la contraseña es válida
 const errorContraseña = computed(() => contraseña.value.length > 0 && contraseña.value.length < 6);
 </script>
+
 
 <style scoped>
 a {

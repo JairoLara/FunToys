@@ -1,21 +1,35 @@
 <template>
-  <img src="/src/images/logo_completo_png-removebg-preview.png" alt="">
+  <img src="/src/images/logo_completo_png-removebg-preview.png" alt="Logo">
   <div class="login-container">
     <h1>Iniciar Sesión</h1>
     <hr>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
         <label for="email">Correo Electrónico:</label>
-        <input placeholder="Introducir correo electrónico" type="email" v-model="email" id="email" required />
+        <input
+          placeholder="Introducir correo electrónico"
+          type="email"
+          v-model="email"
+          id="email"
+          required
+        />
+        <p v-if="email && !email.includes('@')" class="error-text">Falta el símbolo '@' en el correo.</p>
       </div>
 
       <div class="form-group">
         <label for="password">Contraseña:</label>
-        <input placeholder="Introducir contraseña" type="password" v-model="contraseña" id="password" required />
+        <input
+          placeholder="Introducir contraseña"
+          type="password"
+          v-model="contraseña"
+          id="password"
+          required
+        />
       </div>
 
-      <button type="submit">Iniciar Sesión</button>
+      <button type="submit" :disabled="!email.includes('@') || !contraseña">Iniciar Sesión</button>
     </form>
+
     <p><a href="/register">¿No tienes cuenta? Regístrate</a></p>
   </div>
 </template>
@@ -24,30 +38,47 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 const email = ref('');
 const contraseña = ref('');
 const router = useRouter();
 
 const handleLogin = async () => {
+  if (!email.value.includes('@')) {
+    return;
+  }
+
   try {
     const response = await axios.post('http://localhost:7000/api/login', {
       email: email.value,
       contraseña: contraseña.value
     });
 
-    console.log('Inicio de sesión exitoso', response.data);
-    alert('Inicio de sesión exitoso');
 
-    // Guardar el token en localStorage si lo devuelve el backend
+    Swal.fire({
+      title: "¡Inicio de sesión exitoso!",
+      text: "Bienvenido de nuevo",
+      icon: "success",
+      timer: 1000,
+      showConfirmButton: false
+    });
+
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
     }
 
-    router.push('/products'); // Redirigir a la página principal después del login
+    // Redirigir después de 2 segundos
+    setTimeout(() => {
+      router.push('/products');
+    }, 1000);
   } catch (error) {
-    console.error('Error al iniciar sesión', error.response?.data || error);
-    alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
+    Swal.fire({
+      title: "Error",
+      text: "Correo o contraseña incorrectos. Inténtalo de nuevo.",
+      icon: "error",
+      confirmButtonColor: "#FB5355"
+    });
   }
 };
 </script>
@@ -94,7 +125,7 @@ img {
 }
 
 .form-group {
-  margin-bottom: 55px;
+  margin-bottom: 25px;
 }
 
 label {
@@ -133,7 +164,20 @@ button {
   font-size: 18px;
 }
 
-button:hover {
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
   background-color: #b86768;
 }
+
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
 </style>
+
