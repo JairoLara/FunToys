@@ -8,6 +8,7 @@
 <style>
 body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
   background-color: #FFEDA1;
   margin: 0%;
 }
