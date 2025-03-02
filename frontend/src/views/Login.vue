@@ -36,17 +36,26 @@ const handleLogin = async () => {
       contraseña: contraseña.value
     });
 
-    console.log('Inicio de sesión exitoso', response.data);
-    alert('Inicio de sesión exitoso');
+    const data = response.data;
+    console.log('Inicio de sesión exitoso:', data);
 
-    // Guardar el token en localStorage si lo devuelve el backend
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
+    if (data.id) {
+      // Guardar en localStorage correctamente
+      localStorage.setItem('usuario_id', String(data.id)); // Convertir a string si es necesario
+      localStorage.setItem('usuario_nombre', data.nombre);
+
+      // Guardar el token si existe
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
+      alert(`Bienvenido, ${data.nombre}`);
+      router.push('/products'); // Redirigir a la página principal
+    } else {
+      throw new Error("No se recibió el ID del usuario en la respuesta.");
     }
-
-    router.push('/products'); // Redirigir a la página principal después del login
   } catch (error) {
-    console.error('Error al iniciar sesión', error.response?.data || error);
+    console.error('Error al iniciar sesión:', error.response?.data || error);
     alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
   }
 };

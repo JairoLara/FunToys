@@ -44,22 +44,32 @@ router.get('/marca', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { email, contraseña } = req.body;
-  
+
   try {
     const usuario = await Usuario.findOne({ where: { email } });
-    
+
     if (!usuario) {
       return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
-    
+
     if (usuario.contraseña !== contraseña) {
       return res.status(400).json({ success: false, message: 'Contraseña incorrecta' });
     }
-    
-    return res.status(200).json({ success: true, message: 'Login exitoso' });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Login exitoso',
+      id: usuario.id,       
+      nombre: usuario.nombre 
+    });
+
   } catch (error) {
     console.error('Error en el servidor:', error);
-    return res.status(500).json({ success: false, message: 'Error en el servidor', error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: 'Error en el servidor',
+      error: error.message
+    });
   }
 });
 

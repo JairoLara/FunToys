@@ -1,12 +1,13 @@
 <template>
   <NavBar />
-    <div v-if="producto" class="producto-container">
-      <div class="producto-imagen">
-        <img :src="producto.imagen" :alt="producto.nombre"/>
-      </div>
+  <div v-if="producto" class="producto-container">
+    <a class="link" href="/products"><strong>Volver</strong></a>
+    <div class="producto-imagen">
+      <img :src="producto.imagen" :alt="producto.nombre"/>
+    </div>
 
-      <div class="producto-info">
-        <h2>{{ producto.nombre }}</h2>
+    <div class="producto-info">
+      <h2>{{ producto.nombre }}</h2>
       <p>{{ producto.descripcion }}</p>
       <p class="precio">Precio: ${{ producto.precio }}</p>
 
@@ -17,69 +18,102 @@
         <button @click="aumentarCantidad">+</button>
       </div>
 
-
-      <button>Comprar ahora</button>
-      <button>Agregar al carrito</button>
-      <button>Agregar a favoritos</button>
-      </div>
-
+      <button @click="comprar">Comprar ahora</button>
+      <button @click="agregarAlCarrito">Agregar al carrito</button>
+      <button @click="agregarAFavoritos">Agregar a favoritos</button>  
+      <!-- Solo agrega, no permite eliminar -->
     </div>
-    <div v-else>
-      <p>Producto no encontrado.</p>
-    </div>
-  </template>
+  </div>
 
-  <script setup lang="ts">
-  import { ref, onMounted } from "vue";
-  import { useRoute } from "vue-router";
-  import NavBar from '@/components/NavBar.vue';
+  <div v-else>
+    <p>Producto no encontrado.</p>
+  </div>
+</template>
 
-  interface Producto {
-    id: number;
-    nombre: string;
-    descripcion: string;
-    precio: number;
-    imagen: string;
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import NavBar from '@/components/NavBar.vue';
+
+interface Producto {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  imagen: string;
+}
+
+const producto = ref<Producto | null>(null);
+const route = useRoute();
+const cantidad = ref(1);
+const usuarioId = ref(localStorage.getItem("usuario_id") || ""); // ID del usuario autenticado
+
+// Obtener la lista de favoritos del usuario desde localStorage
+const obtenerFavoritos = () => {
+  const userId = localStorage.getItem("usuario_id"); // Obtiene usuario actualizado
+  if (!userId) return []; // Si no hay usuario, retorna lista vacía
+  const favoritos = localStorage.getItem(`favoritos_${userId}`);
+  return favoritos ? JSON.parse(favoritos) : [];
+};
+
+// Función para agregar a favoritos (sin eliminar)
+const agregarAFavoritos = () => {
+  const userId = localStorage.getItem("usuario_id"); // Obtiene usuario actualizado
+  if (!userId) {
+    alert("Debes iniciar sesión para agregar a favoritos.");
+    return;
   }
 
-  const producto = ref<Producto | null>(null);
-  const route = useRoute();
-  const cantidad = ref(1);
-
-  onMounted(async () => {
-    const productoId = Number(route.params.id);
-    try {
-      const response = await fetch("http://localhost:7000/api/juguetes");
-      if (!response.ok) throw new Error("No se pudo");
-      const data: Producto[] = await response.json();
-      producto.value = data.find((j) => j.id === productoId) || null;
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
-  // Funciones para modificar la cantidad
-const aumentarCantidad = () => {
-  cantidad.value++;
+  let favoritos = obtenerFavoritos(); // Obtiene favoritos del usuario actual
+  if (producto.value && !favoritos.some((p: Producto) => p.id === producto.value?.id)) {
+    favoritos.push(producto.value);
+    localStorage.setItem(`favoritos_${userId}`, JSON.stringify(favoritos)); // Guarda con clave única
+    alert("Producto agregado a favoritos");
+  } else {
+    alert("Este producto ya está en favoritos");
+  }
 };
 
-const disminuirCantidad = () => {
-  if (cantidad.value > 1) cantidad.value--;
+// Función para eliminar un producto de favoritos
+const eliminarDeFavoritos = (productoId: number) => {
+  const userId = localStorage.getItem("usuario_id");
+  if (!userId) return;
+
+  let favoritos = obtenerFavoritos().filter((p: Producto) => p.id !== productoId);
+  localStorage.setItem(`favoritos_${userId}`, JSON.stringify(favoritos));
+  alert("Producto eliminado de favoritos");
 };
 
-// Función para comprar con la cantidad seleccionada
-const comprar = () => {
-  alert(`Compraste ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
-};
+// Obtener el producto según el ID de la ruta
+onMounted(async () => {
+  const productoId = Number(route.params.id);
+  try {
+    const response = await fetch("http://localhost:7000/api/juguetes");
+    if (!response.ok) throw new Error("No se pudo cargar el producto");
+    const data: Producto[] = await response.json();
+    producto.value = data.find((j) => j.id === productoId) || null;
+  } catch (err) {
+    console.error(err);
+  }
+});
 
-// Función para agregar al carrito con la cantidad seleccionada
-const agregarAlCarrito = () => {
-  alert(`Agregado al carrito: ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
-};
+// Funciones para modificar la cantidad
+const aumentarCantidad = () => cantidad.value++;
+const disminuirCantidad = () => { if (cantidad.value > 1) cantidad.value--; };
 
-  </script>
+// Funciones de compra y carrito
+const comprar = () => alert(`Compraste ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
+const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
+</script>
 
   <style scoped>
+  .link{
+    color: black;
+    text-decoration: none;
+    position: absolute;
+    top: 15%;
+    left: 3%;
+  }
 
   .producto-container {
     display: flex;
