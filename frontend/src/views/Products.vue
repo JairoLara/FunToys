@@ -1,6 +1,7 @@
 <template>
   <NavBar />
   <CategoriasNav />
+  <News />
   <!-- Carrusel Ofertas -->
   <div class="carousel-container">
     <h2 style="text-align: start;">Ofertas</h2>
@@ -44,6 +45,7 @@ const router = useRouter();
 import { ref, onMounted } from "vue";
 import Footer from "@/components/footer.vue";
 import NavBar from '@/components/NavBar.vue';
+import News from '@/components/News.vue';
 import CategoriasNav from '@/components/CategoriasNav.vue';
 
 interface Juguete {

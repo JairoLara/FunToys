@@ -82,7 +82,7 @@ const searchQuery = ref("");
 const juguetes = ref<Juguete[]>([]);
 
 const fetchJuguetes = async () => {
-  if (searchQuery.value.length > 2) {
+  if (searchQuery.value.length > 0) {
     try {
       const response = await fetch("http://localhost:7000/api/juguetes");
       const data: Juguete[] = await response.json();

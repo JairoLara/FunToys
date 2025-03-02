@@ -4,11 +4,12 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('juguetes', [
       {
+        //LEGO
         nombre: 'LEGO Set de construccion Super Mario 71426 Planta Pirana 540 Piezas',
         descripcion: 'Modelo de exhibición construible Planta Piraña (71426): Disfruta de una aventura de construcción que te permitirá recrear al estilo LEGO los detalles más sutiles de un inconfundible personaje del universo Super Mario',
         precio: 1499.00,
         stock: 50,
-        imagen: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgQH_7tl-s0eoOkyCVvnMa7yp1gatkPlW3ag&s',
+        imagen: 'https://m.media-amazon.com/images/I/51lu7eJ0kOL._AC_SX522_.jpg',
         marcaId: 1, // Asegúrate de que la marca con ID 1 exista en la tabla `marcas`
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -296,11 +297,11 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        nombre: 'Nerf - Roblox ¡Adóptame! : ¡Abejas! Lanzador de dardos Lever Action, tambor giratorio de 8 dardos, 8 dardos Elite, código para desbloquear un objeto virtual del juego',
-        descripcion: 'NERF ROBLOX ADOPT ME! : ABEJOS. Lanzador de dardos: este lanzador de dardos se inspira en el juego Roblox Adopt Me',
-        precio: 558.45,
+        nombre: 'OMG ALL STORE Roblox Plush Buddies - Juguetes de peluche para aficionados, niños y amigos, regalos de muñeca de felpa (niños)',
+        descripcion: 'La felpa Roblox está inspirada en el popular juego, linda forma de dibujos animados, con colores suaves, la imagen es vívida y realista, la gente no puede dejarla',
+        precio:299.00,
         stock: 40,
-        imagen: 'https://m.media-amazon.com/images/I/61DzE0DoWMS._AC_SY355_.jpg',
+        imagen: 'https://m.media-amazon.com/images/I/31JlKpndYcL._AC_SX522_.jpg',
         marcaId: 8,
         createdAt: new Date(),
         updatedAt: new Date(),
