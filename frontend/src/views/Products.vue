@@ -155,8 +155,10 @@ h3 {
 }
 
 h2 {
-font-size: 20px;
+font-size: 60px;
 margin-bottom: 10px;
+color: red;
+
 }
 
 .carousel-container {

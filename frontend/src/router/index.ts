@@ -7,6 +7,8 @@ import Product from '@/views/Product.vue'
 import ProductoMarca from '@/views/ProductoMarca.vue'
 import Favoritos from '@/views/Favoritos.vue'
 import Admin from '@/views/admin/AdminProducts.vue'
+import AdminProductDetail from '@/views/admin/AdminProductDetail.vue'
+import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
 
 
 const router = createRouter({
@@ -42,7 +44,7 @@ const router = createRouter({
       path: '/producto-marca/:id',
       name: 'ProductoMarca',
       component: ProductoMarca,
-      props: true 
+      props: true
     },
     {
       path : '/favoritos',
@@ -54,6 +56,16 @@ const router = createRouter({
       name : 'admin',
       component : Admin
     },
+    {
+      path: '/productadmin/:id',
+      name: 'productpdmin',
+      component: AdminProductDetail,
+    },
+    {
+      path: '/productsbrands/:id',
+      name: 'productsbrands',
+      component: AdminProductsBrans,
+    }
   ],
 })
 

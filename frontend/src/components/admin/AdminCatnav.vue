@@ -39,7 +39,7 @@ const marcasinf = computed(() => [
 ]);
 
 const irAProductoMarca = (id: number) => {
-    router.push(`/producto-marca/${id}`);
+    router.push(`/productsbrands/${id}`);
 };
 
 const iniciarCarrusel = () => {

@@ -1,4 +1,4 @@
-<template> 
+<template>
   <AdminNavBar />
   <CategoriasNav />
   <AdminCatnav />
@@ -35,9 +35,9 @@
     </div>
     <button class="arrow right" @click="scrollRight('productosCarousel')">❯</button>
   </div>
-  
-  <AggProduct 
-      :mostrarModal="mostrarModal" 
+
+  <AggProduct
+      :mostrarModal="mostrarModal"
       :setMostrarModal="setMostrarModal"
     />
 
@@ -105,7 +105,7 @@ const seleccionarDeterminados = (lista: Juguete[], cantidad: number) => {
 };
 
 const iradetalle = (id: number) => {
-  router.push(`/product/${id}`);
+  router.push(`/productadmin/${id}`);
 };
 
 const scrollLeft = (carouselRef: string) => {

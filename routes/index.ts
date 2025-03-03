@@ -224,5 +224,53 @@ router.get('/:id/juguetes', async (req, res) => {
   }
 });
 
+router.put('/juguetes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, descripcion, precio, stock, imagen, marcaId } = req.body;
+
+    const juguete = await Juguete.findByPk(id);
+    if (!juguete) {
+      return res.status(404).json({ message: 'Juguete no encontrado' });
+    }
+
+    // Actualizar el juguete con los nuevos datos
+    await juguete.update({
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      imagen,
+      marcaId,
+    });
+
+    return res.json({ success: true, message: 'Juguete actualizado correctamente', juguete });
+  } catch (error) {
+    console.error('Error al actualizar el juguete:', error);
+    return res.status(500).json({ message: 'Error al actualizar el juguete' });
+  }
+});
+
+
+// Eliminar un juguete
+router.delete('/juguetes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const juguete = await Juguete.findByPk(id);
+    if (!juguete) {
+      return res.status(404).json({ message: 'Juguete no encontrado' });
+    }
+
+    await juguete.destroy();
+
+    return res.json({ message: 'Juguete eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar el juguete:', error);
+    return res.status(500).json({ message: 'Error al eliminar el juguete' });
+  }
+});
+
+
 
 export default router;
