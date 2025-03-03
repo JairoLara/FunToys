@@ -55,30 +55,28 @@ const handleLogin = async () => {
       contraseña: contraseña.value
     });
 
+    const data = response.data;
+    console.log('Inicio de sesión exitoso:', data);
 
-    Swal.fire({
-      title: "¡Inicio de sesión exitoso!",
-      text: "Bienvenido de nuevo",
-      icon: "success",
-      timer: 1000,
-      showConfirmButton: false
-    });
+    if (data.id) {
+      // Guardar en localStorage correctamente
+      localStorage.setItem('usuario_id', String(data.id)); // Convertir a string si es necesario
+      localStorage.setItem('usuario_nombre', data.nombre);
 
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
+      // Guardar el token si existe
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
+      alert(`Bienvenido, ${data.nombre}`);
+      router.push('/products'); // Redirigir a la página principal
+    } else {
+      throw new Error("No se recibió el ID del usuario en la respuesta.");
     }
-
-    // Redirigir después de 2 segundos
-    setTimeout(() => {
-      router.push('/products');
-    }, 1000);
   } catch (error) {
-    Swal.fire({
-      title: "Error",
-      text: "Correo o contraseña incorrectos. Inténtalo de nuevo.",
-      icon: "error",
-      confirmButtonColor: "#FB5355"
-    });
+    console.error('Error al iniciar sesión:', error.response?.data || error);
+    alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
+
   }
 };
 </script>
