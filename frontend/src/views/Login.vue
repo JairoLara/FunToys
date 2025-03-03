@@ -27,7 +27,7 @@
         />
       </div>
 
-      <button type="submit" :disabled="!email.includes('@') || !contraseña">Iniciar Sesión</button>
+      <button type="submit" :disabled="!email || !contraseña || !email.includes('@')">Iniciar Sesión</button>
     </form>
 
     <p><a href="/register">¿No tienes cuenta? Regístrate</a></p>
@@ -46,6 +46,7 @@ const router = useRouter();
 
 const handleLogin = async () => {
   if (!email.value.includes('@')) {
+    Swal.fire('Error', 'Por favor, introduce un correo válido.', 'error');
     return;
   }
 
@@ -59,24 +60,28 @@ const handleLogin = async () => {
     console.log('Inicio de sesión exitoso:', data);
 
     if (data.id) {
-      // Guardar en localStorage correctamente
-      localStorage.setItem('usuario_id', String(data.id)); // Convertir a string si es necesario
+      localStorage.setItem('usuario_id', String(data.id));
       localStorage.setItem('usuario_nombre', data.nombre);
+      localStorage.setItem('usuario_rol', data.rol);
 
-      // Guardar el token si existe
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
 
-      alert(`Bienvenido, ${data.nombre}`);
-      router.push('/products'); // Redirigir a la página principal
+      Swal.fire('Bienvenido', `Hola, ${data.nombre}`, 'success');
+
+      // Redirigir según el rol
+      if (data.rol === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/products');
+      }
     } else {
       throw new Error("No se recibió el ID del usuario en la respuesta.");
     }
   } catch (error) {
     console.error('Error al iniciar sesión:', error.response?.data || error);
-    alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
-
+    Swal.fire('Error', 'Correo o contraseña incorrectos. Inténtalo de nuevo.', 'error');
   }
 };
 </script>

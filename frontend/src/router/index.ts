@@ -6,6 +6,7 @@ import Pago from '@/views/pago.vue'
 import Product from '@/views/Product.vue'
 import ProductoMarca from '@/views/ProductoMarca.vue'
 import Favoritos from '@/views/Favoritos.vue'
+import Admin from '@/views/admin/AdminProducts.vue'
 
 
 const router = createRouter({
@@ -47,6 +48,11 @@ const router = createRouter({
       path : '/favoritos',
       name : 'favoritos',
       component : Favoritos
+    },
+    {
+      path : '/admin',
+      name : 'admin',
+      component : Admin
     },
   ],
 })
