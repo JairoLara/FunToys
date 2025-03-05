@@ -41,6 +41,11 @@
       :setMostrarModal="setMostrarModal"
     />
 
+    <RegisterAdmin
+      :mostrarModal="mostrarModal"
+      :setMostrarModal="setMostrarModal"
+    />
+
   <Footer />
 </template>
 
@@ -53,6 +58,7 @@ import AdminNavBar from '@/components/admin/AdminNav.vue';
 import AdminCatnav from '@/components/admin/AdminCatnav.vue';
 import CategoriasNav from '@/components/CategoriasNav.vue';
 import AggProduct from "@/components/admin/AggProduct.vue";
+import RegisterAdmin from '@/components/admin/RegisterAdmin.vue';
 
 
 const mostrarModal = ref(false);
