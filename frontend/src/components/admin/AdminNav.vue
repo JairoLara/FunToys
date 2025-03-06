@@ -8,6 +8,9 @@
           class="logo"
         />
         </router-link>
+
+
+
         <div class="search-icons-container">
           <div class="search-container">
             <input
@@ -53,21 +56,22 @@
       </div>
     </nav>
   </template>
-  
+
   <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from "vue";
   import { useRouter } from 'vue-router';
-  const router = useRouter();
   
+  const router = useRouter();
+
   interface Juguete {
     id: number;
     nombre: string;
     imagen: string;
   }
-  
+
   const searchQuery = ref("");
   const juguetes = ref<Juguete[]>([]);
-  
+
   const fetchJuguetes = async () => {
     if (searchQuery.value.length > 0) {
       try {
@@ -82,27 +86,27 @@
       }
     }
   };
-  
+
   const closeResults = (event: MouseEvent) => {
     const searchResults = document.querySelector(".search-results");
     if (searchResults && !searchResults.contains(event.target as Node)) {
       juguetes.value = [];
     }
   };
-  
+
   const iradetalle = (id: number) => {
     router.push(`/product/${id}`);
   };
-  
+
   onMounted(() => {
     document.addEventListener("click", closeResults);
   });
-  
+
   onBeforeUnmount(() => {
     document.removeEventListener("click", closeResults);
   });
   </script>
-  
+
   <style scoped>
   .navbar-content {
     display: flex;
@@ -113,18 +117,18 @@
     align-items: center;
     padding: 10px;
   }
-  
+
   .logo {
     max-width: 150px;
     height: auto;
     cursor: pointer;
   }
-  
+
   .search-icons-container {
     display: flex;
     align-items: center;
   }
-  
+
   .search-container {
     position: relative;
     display: flex;
@@ -136,7 +140,7 @@
     height: 40px;
     background-color: white;
   }
-  
+
   input {
     width: 100%;
     border: none;
@@ -144,7 +148,7 @@
     border-radius: 40px;
     outline: none;
   }
-  
+
   button {
     background-color: transparent;
     border: none;
@@ -152,7 +156,7 @@
     border-radius: 50%;
     cursor: pointer;
   }
-  
+
   .search-results {
     position: absolute;
     top: 45px;
@@ -167,7 +171,7 @@
     margin: 0;
     z-index: 3000;
   }
-  
+
   .juguete-imagen {
     width: 60px;
     height: 60px;
@@ -175,24 +179,24 @@
     border-radius: 5px;
     margin-right: 10px;
   }
-  
+
   .search-results li {
     padding: 8px;
     cursor: pointer;
     transition: background 0.3s;
   }
-  
+
   .search-results li:hover {
     background: #f0f0f0;
   }
-  
+
   .icons {
     display: flex;
     align-items: center;
     padding: 15px;
     gap: 15px;
   }
-  
+
   .user-icon {
     width: 34px;
     height: 34px;

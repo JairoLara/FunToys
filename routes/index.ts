@@ -272,5 +272,52 @@ router.delete('/juguetes/:id', async (req, res) => {
 });
 
 
+//Elimina la fakin marca
+router.delete('/marca/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar la marca
+    const marca = await Marca.findByPk(id);
+    if (!marca) {
+      return res.status(404).json({ message: 'Marca no encontrada' });
+    }
+
+    // Eliminar todos los productos de esa marca
+    await Juguete.destroy({ where: { marcaId: id } });
+
+    // Eliminar la marca
+    await Marca.destroy({ where: { id } });
+
+    return res.json({ message: 'Marca y sus productos eliminados exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar la marca:', error);
+    return res.status(500).json({ message: 'Error al eliminar la marca' });
+  }
+});
+
+//Editar la marca
+router.put('/marca/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, imagen } = req.body;
+
+    // Buscar la marca
+    const marca = await Marca.findByPk(id);
+    if (!marca) {
+      return res.status(404).json({ message: 'Marca no encontrada' });
+    }
+
+    // Actualizar la marca
+    await marca.update({ nombre, imagen });
+
+    return res.json({ message: 'Marca actualizada correctamente', marca });
+  } catch (error) {
+    console.error('Error al actualizar la marca:', error);
+    return res.status(500).json({ message: 'Error al actualizar la marca' });
+  }
+});
+
+
 
 export default router;

@@ -1,11 +1,27 @@
 <template>
-<AdminNavBar/>
+  <AdminNavBar />
   <div>
     <div class="marca-container">
+      <button @click="mostrarFormulario = !mostrarFormulario" class="editar-btn">
+        {{ mostrarFormulario ? 'Cancelar' : 'Editar marca' }}
+      </button>
       <img :src="marca.imagen" :alt="marca.nombre" class="logo" />
+      <button @click="eliminarMarca" class="eliminar-btn">Eliminar marca</button>
     </div>
 
-    <!-- Contenedor de Productos -->
+    <div v-if="mostrarFormulario" class="formulario-editar">
+      <h2>Editar Marca</h2>
+      <form @submit.prevent="guardarCambios">
+        <label>Nombre</label>
+        <input type="text" v-model="marcaEditada.nombre" required />
+
+        <label>Imagen (URL)</label>
+        <input type="text" v-model="marcaEditada.imagen" required />
+
+        <button type="submit">Guardar cambios</button>
+      </form>
+    </div>
+
     <div v-if="productos.length > 0" class="productos-container">
       <div class="productos-wrapper">
         <div
@@ -29,8 +45,9 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Footer from '@/components/footer.vue'
-import AdminNavBar from '@/components/admin/AdminNav.vue';
-
+import AdminNavBar from '@/components/admin/AdminNav.vue'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 interface Producto {
   id: number
@@ -48,15 +65,16 @@ interface Marca {
 const route = useRoute()
 const router = useRouter()
 const marca = ref<Marca>({ id: 0, nombre: '', imagen: '' })
+const marcaEditada = ref<Marca>({ id: 0, nombre: '', imagen: '' })
 const productos = ref<Producto[]>([])
+const mostrarFormulario = ref(false)
 
 const fetchProductos = async () => {
   try {
-    const response = await fetch(`http://localhost:7000/api/${route.params.id}/juguetes`)
-    if (!response.ok) throw new Error('Error al obtener los productos de la marca')
-    const data = await response.json()
-    marca.value = data
-    productos.value = data.productos
+    const response = await axios.get(`http://localhost:7000/api/${route.params.id}/juguetes`)
+    marca.value = response.data
+    marcaEditada.value = { ...response.data } // Copia los datos actuales
+    productos.value = response.data.productos
   } catch (error) {
     console.error('Error al cargar los productos:', error)
   }
@@ -66,6 +84,45 @@ onMounted(fetchProductos)
 
 const iradetalle = (id: number) => {
   router.push(`/productadmin/${id}`)
+}
+
+//editar las marcas
+const guardarCambios = async () => {
+  try {
+    await axios.put(`http://localhost:7000/api/marca/${marca.value.id}`, marcaEditada.value)
+    marca.value = { ...marcaEditada.value } // Actualiza en tiempo real
+    mostrarFormulario.value = false
+    Swal.fire('¡Actualizado!', 'La marca fue editada correctamente.', 'success')
+  } catch (error) {
+    console.error('Error al editar la marca:', error)
+    Swal.fire('Error', 'No se pudo actualizar la marca.', 'error')
+  }
+}
+
+
+//eliminar las marcas
+const eliminarMarca = async () => {
+  const resultado = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: `Se eliminará la marca "${marca.value.nombre}" y todos sus productos. Esta acción no se puede deshacer.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  })
+
+  if (resultado.isConfirmed) {
+    try {
+      await axios.delete(`http://localhost:7000/api/marca/${marca.value.id}`)
+      await Swal.fire('¡Eliminado!', 'La marca y sus productos fueron eliminados.', 'success')
+      router.push('/admin')
+    } catch (error) {
+      console.error('Error al eliminar la marca:', error)
+      Swal.fire('Error', 'Hubo un problema al eliminar la marca.', 'error')
+    }
+  }
 }
 </script>
 
@@ -125,5 +182,43 @@ h3 {
 .precio {
   font-weight: bold;
   color: #28a745;
+}
+button {
+  width: 30%;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #fb5355;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background-color: #ff7b7e;
+}
+
+
+.formulario-editar {
+  width: 50%;
+  margin: auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.formulario-editar h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.formulario-editar input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 </style>

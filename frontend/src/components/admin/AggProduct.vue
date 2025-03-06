@@ -59,7 +59,7 @@
   </div>
 
   <!-- Botón para abrir el modal -->
-  <button style=" margin-left: 46%; margin-bottom: 10px;" @click="abrirModal">Agregar producto o marca</button>
+  <button style=" " @click="abrirModal">Agregar producto o marca</button>
 </template>
 
 <script setup lang="ts">

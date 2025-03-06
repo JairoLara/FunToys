@@ -29,7 +29,7 @@
   </div>
 
   <!-- Botón para abrir el modal -->
-  <button style=" margin-left: 46%; margin-bottom: 10px;" @click="abrirModal">Registrar Administrador</button>
+  <button  @click="abrirModal">Registrar Administrador</button>
 </template>
 
 <script setup>
@@ -93,6 +93,7 @@ button {
   background-color: #007bff;
   color: white;
   font-size: 16px;
+  margin: 10px;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s ease;

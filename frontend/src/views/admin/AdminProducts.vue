@@ -1,7 +1,22 @@
 <template>
   <AdminNavBar />
+
   <CategoriasNav />
+  <div class="container-admin">
+    <h1>Panel de Administración</h1>
+    <AggProduct
+      :mostrarModal="mostrarModal"
+      :setMostrarModal="setMostrarModal"
+    />
+
+    <RegisterAdmin
+      :mostrarModal="mostrarModal"
+      :setMostrarModal="setMostrarModal"
+    />
+  </div>
   <AdminCatnav />
+
+
   <!-- Carrusel Ofertas -->
   <div class="carousel-container">
     <h2 style="text-align: start;">Ofertas</h2>
@@ -276,5 +291,16 @@ h3 {
 
 .scroll-bar:hover {
   background: #555;
+}
+
+.container-admin {
+  display: flex;
+  align-items: center;
+ background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+
 }
 </style>
