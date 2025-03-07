@@ -36,18 +36,33 @@
   </li>
 </ul>
         </div>
+        
         <div class="icons">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="34px"
-            viewBox="0 -960 960 960"
-            width="34px"
-            fill="#5985E1"
-          >
-            <path
-              d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"
-            />
-          </svg>
+          <div>
+    <div @click="abrirModal" class="cursor-pointer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="34px"
+        viewBox="0 -960 960 960"
+        width="34px"
+        fill="#5985E1"
+      >
+        <path
+          d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"
+        />
+      </svg>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="mostrarModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title">Perfil</h2>
+        <p class="modal-text">👤 {{ nombreUsuario }}</p>
+        <button @click="cerrarSesion" class="modal-button">Cerrar sesión</button>
+        <button @click="cerrarModal" class="modal-close">✖</button>
+      </div>
+    </div>
+  </div>
           <router-link to="/favoritos">
   <img
     src="../images/favourite-icon 2.png"
@@ -119,6 +134,31 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener("click", closeResults);
 });
+
+const mostrarModal = ref(false);
+const nombreUsuario = ref("");
+
+// Función para abrir el modal
+const abrirModal = () => {
+  mostrarModal.value = true;
+};
+
+// Función para cerrar el modal
+const cerrarModal = () => {
+  mostrarModal.value = false;
+};
+
+// Obtener nombre del usuario desde localStorage
+onMounted(() => {
+  const usuarioNombre = localStorage.getItem("usuario_nombre");
+  nombreUsuario.value = usuarioNombre ? usuarioNombre : "Usuario";
+});
+
+// Función para cerrar sesión
+const cerrarSesion = () => {
+  localStorage.removeItem("token"); // Eliminar token
+  window.location.href = "/"; // Redirigir al login
+};
 </script>
 
 <style scoped>
@@ -209,10 +249,75 @@ button {
   align-items: center;
   padding: 15px;
   gap: 15px;
+  cursor: pointer;
 }
 
 .user-icon {
   width: 34px;
   height: 34px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  width: 300px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.modal-text {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.modal-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-button:hover {
+  background: #c0392b;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #333;
+}
+
+.modal-close:hover {
+  color: red;
 }
 </style>
