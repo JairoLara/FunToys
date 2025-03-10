@@ -188,7 +188,7 @@ const abrirModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(92, 77, 5, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -196,30 +196,63 @@ const abrirModal = () => {
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #f7d85d;
   padding: 30px;
-  border-radius: 8px;
+  border-radius: 50px;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
   overflow-y: auto;
+}
+
+h2 {
+  color: #f6e95e;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+input {
+  padding: 10px;
+  border: 2px solid #ab8f03;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+input:focus {
+  border-color: #fdc50e;
+  box-shadow: 0 0 5px #d6b006;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  background-color: #007bff;
+  background-color: #a79527;
   color: white;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 button[type="button"] {
@@ -231,7 +264,7 @@ button[type="button"]:hover {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #6d7503;
 }
 
 button:focus {
@@ -239,11 +272,11 @@ button:focus {
 }
 
 button:disabled {
-  background-color: #ccc;
+  background-color: #070707;
   cursor: not-allowed;
 }
 
-/* Ajustes para pantallas pequeñas */
+/* Ajustes para pantallas pequeñas */
 @media (max-width: 600px) {
   .modal-content {
     padding: 20px;
@@ -261,14 +294,6 @@ button:disabled {
   animation: fadeIn 0.3s ease;
 }
 
-/* Animación de desvanecimiento */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+
 
 </style>

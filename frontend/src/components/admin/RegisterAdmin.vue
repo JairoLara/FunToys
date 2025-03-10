@@ -61,6 +61,7 @@ const cerrarModal = () => (mostrarModal.value = false);
 const abrirModal = () => (mostrarModal.value = true);
 </script>
 
+
 <style scoped>
 .modal-overlay {
   position: fixed;
@@ -68,44 +69,82 @@ const abrirModal = () => (mostrarModal.value = true);
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(92, 77, 5, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
+
 .modal-content {
-  background-color: white;
+  background-color: #f7d85d;
   padding: 30px;
-  border-radius: 8px;
+  border-radius: 50px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
+
+h2 {
+  color: #f6e95e; 
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+input {
+  padding: 10px;
+  border: 2px solid #ab8f03;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+input:focus {
+  border-color: #fdc50e;
+  box-shadow: 0 0 5px #d6b006;
+}
+
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+  justify-content: space-around;
+  margin-top: 20px;
 }
+
 button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  background-color: #007bff;
+  background-color: #a79527; 
   color: white;
   font-size: 16px;
-  margin: 10px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
+
 button:hover {
-  background-color: #0056b3;
+  background-color: #6d7503;
 }
+
 button:focus {
   outline: none;
 }
+
 button:disabled {
-  background-color: #ccc;
+  background-color: #070707;
   cursor: not-allowed;
 }
 </style>
