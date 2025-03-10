@@ -77,7 +77,7 @@ const route = useRoute();
 const router = useRouter();
 
 // Obtenemos el usuario desde localStorage
-const usuarioId = ref(localStorage.getItem("usuarioId") || "");
+const usuarioId = ref(localStorage.getItem("usuario_id") || "");
 const numeroTarjeta = ref("");
 const mes = ref("");
 const anio = ref("");
