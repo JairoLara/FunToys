@@ -1,7 +1,7 @@
 <template>
   <NavBar />
   <div v-if="producto" class="producto-container">
-    <a class="link" href="/products"><strong>Volver</strong></a>
+    <a class="link" href="/"><strong>Volver</strong></a>
     <div class="producto-imagen">
       <img :src="producto.imagen" :alt="producto.nombre"/>
     </div>
