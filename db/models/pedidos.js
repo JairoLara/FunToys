@@ -7,9 +7,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'usuarioId',
         as: 'usuario',
       });
-      this.hasMany(models.DetallePedido, {
-        foreignKey: 'pedidoId',
-        as: 'detalles',
+      this.belongsTo(models.Juguete, {
+        foreignKey: 'jugueteId',
+        as: 'juguete',
       });
       this.hasOne(models.Pago, {
         foreignKey: 'pedidoId',
@@ -31,6 +31,18 @@ module.exports = (sequelize, DataTypes) => {
           model: 'usuarios',
           key: 'id',
         },
+      },
+      jugueteId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'juguetes',
+          key: 'id',
+        },
+      },
+      cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       total: {
         type: DataTypes.DECIMAL(10, 2),
@@ -54,3 +66,4 @@ module.exports = (sequelize, DataTypes) => {
   );
   return Pedido;
 };
+

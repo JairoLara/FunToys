@@ -15,6 +15,17 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      jugueteId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'juguetes', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      cantidad: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       total: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,

@@ -1,5 +1,5 @@
 <template>
-  
+  <NavBar />
   <div class="payment-container">
     <div class="payment-section">
       <h5>Medios de pago:</h5>
@@ -16,7 +16,7 @@
         placeholder="XXXX-XXXX-XXXX-XXXX" 
         v-model="numeroTarjeta"
         @input="formatearTarjeta"
-        maxlength="19"
+        maxlength="16"
         required 
       />
 
@@ -56,75 +56,91 @@
       </div>
 
       <h5 class="total">Total</h5>
-      <p class="price">MXN</p>
+      <p class="price">MXN {{ total }}</p>
       <button class="pay-button" @click="validarFormulario">Finalizar pago</button>
     </div>
 
     <div class="product-section">
-      <h5>....</h5>
-      <p class="product-price">$</p>
+      <h5>{{ productoNombre }}</h5>
+      <p class="product-price">${{ total }}</p>
     </div>
   </div>
-
 </template>
 
-<script>
-export default {
-  name: "PaymentView",
-  data() {
-    return {
-      numeroTarjeta: "",
-      mes: "",
-      anio: "",
-      cvc: ""
-    };
-  },
-  methods: {
-    formatearTarjeta() {
-      this.numeroTarjeta = this.numeroTarjeta.replace(/\D/g, ""); 
-      this.numeroTarjeta = this.numeroTarjeta.replace(/(\d{4})/g, "$1-").trim(); 
-      this.numeroTarjeta = this.numeroTarjeta.slice(0, 19); 
-    },
-    validarMes() {
-      this.mes = this.mes.replace(/\D/g, ""); 
-      if (this.mes.length === 2 && (parseInt(this.mes) < 1 || parseInt(this.mes) > 12)) {
-        this.mes = "";
-        alert("El mes debe estar entre 01 y 12");
-      }
-    },
-    validarAnio() {
-      this.anio = this.anio.replace(/\D/g, "");
-      if (this.anio.length > 2) this.anio = this.anio.slice(0, 2);
-    },
-    validarCVC() {
-      this.cvc = this.cvc.replace(/\D/g, ""); 
-      if (this.cvc.length > 3) this.cvc = this.cvc.slice(0, 3);
-    },
-    validarFormulario() {
-      if (!this.numeroTarjeta || !this.mes || !this.anio || !this.cvc) {
-        this.errorMensaje = "Todos los campos son obligatorios.";
-        return;
-      }
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+import NavBar from '@/components/NavBar.vue';
 
-      this.errorMensaje = ""; 
-      
-      let numeroWhatsApp = "521234567890"; 
+const route = useRoute();
+const router = useRouter();
 
-      
-      let mensaje = "El pago ha sido procesado correctamente.";
+// Obtenemos el usuario desde localStorage
+const usuarioId = ref(localStorage.getItem("usuarioId") || "");
+const numeroTarjeta = ref("");
+const mes = ref("");
+const anio = ref("");
+const cvc = ref("");
+const jugueteId = ref(route.query.id ? Number(route.query.id) : null);
+const productoNombre = ref(route.query.nombre || "Producto desconocido");
+const cantidad = ref(route.query.cantidad ? Number(route.query.cantidad) : 1);
+const precio = ref(route.query.precio ? Number(route.query.precio) : 0);
 
-      
-      let url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+const total = computed(() => cantidad.value * precio.value);
 
-     
-      window.open(url, "_blank");
+// Verificar si el usuario está autenticado
+const verificarUsuario = () => {
+  if (!usuarioId.value) {
+    alert("Debes iniciar sesión para proceder con el pago.");
+    router.push({ name: "login" }); // Redirige al login si no hay usuario autenticado
+    return false;
   }
-}
+  return true;
+};
+
+// Función para guardar el pedido
+const guardarPedido = async () => {
+  if (!verificarUsuario()) return; // Solo continuar si el usuario está autenticado
+
+  console.log("Enviando datos a la API:", {
+    usuarioId: usuarioId.value,
+    jugueteId: jugueteId.value,
+    cantidad: cantidad.value,
+    total: total.value
+  });
+
+  try {
+    const response = await axios.post("http://localhost:7000/api/guardar", {
+      usuarioId: usuarioId.value,
+      jugueteId: jugueteId.value,
+      cantidad: cantidad.value,
+      total: total.value
+    });
+
+    alert(response.data.mensaje);
+    router.push({ name: "products" });
+  } catch (error) {
+    console.error("Error en la petición:", error.response ? error.response.data : error);
+    alert("No se pudo completar el pago. Revisa la consola.");
+  }
+};
+
+// Validar formulario antes de proceder al pago
+const validarFormulario = () => {
+  if (!numeroTarjeta.value || !mes.value || !anio.value || !cvc.value) {
+    alert("Todos los campos son obligatorios.");
+    return;
+  }
+
+  guardarPedido(); // Llamamos a la función para guardar en la base de datos
 };
 </script>
 
-<style scoped>
 
+
+
+<style scoped>
 .payment-container {
   position: absolute;
   top: 50%;
@@ -140,8 +156,8 @@ export default {
   max-width: 600px;
   background-color: #f8f9fa;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 100%; 
-  box-sizing: border-box; 
+  width: 100%;
+  box-sizing: border-box;
 }
 .payment-section, .product-section {
   width: 50%;

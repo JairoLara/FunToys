@@ -13,9 +13,9 @@
 
       <!-- Contador de cantidad -->
       <div class="contador">
-        <button @click="disminuirCantidad" :disabled="cantidad <= 1">-</button>
+        <button class="menos" @click="disminuirCantidad" :disabled="cantidad <= 1">-</button>
         <span>{{ cantidad }}</span>
-        <button @click="aumentarCantidad">+</button>
+        <button class="mas" @click="aumentarCantidad">+</button>
       </div>
 
       <button @click="comprar">Comprar ahora</button>
@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import NavBar from '@/components/NavBar.vue';
 
 interface Producto {
@@ -45,6 +45,7 @@ interface Producto {
 
 const producto = ref<Producto | null>(null);
 const route = useRoute();
+const router = useRouter()
 const cantidad = ref(1);
 const usuarioId = ref(localStorage.getItem("usuario_id") || ""); // ID del usuario autenticado
 
@@ -102,7 +103,31 @@ const aumentarCantidad = () => cantidad.value++;
 const disminuirCantidad = () => { if (cantidad.value > 1) cantidad.value--; };
 
 // Funciones de compra y carrito
-const comprar = () => alert(`Compraste ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
+const comprar = () => {
+  if (!producto.value) {
+    alert("Error: No se encontró el producto.");
+    return;
+  }
+
+  console.log("Navegando a vista de pago con:", {
+    id: producto.value.id,
+    nombre: producto.value.nombre,
+    cantidad: cantidad.value,
+    precio: producto.value.precio
+  });
+
+  router.push({
+    name: "pay",
+    query: {
+      id: producto.value.id.toString(),
+      nombre: producto.value.nombre,
+      cantidad: cantidad.value.toString(),
+      precio: producto.value.precio.toString()
+    }
+  });
+};
+
+
 const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
 </script>
 
@@ -164,9 +189,10 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
   align-items: center;
   margin: 10px 0;
   border-radius: 40px;
-  background-color: #1f578e;
+  background-color: #ffffff;
   padding: 10px;
   width: 100px;
+  border: 2px solid black;
 }
 
 .contador button {
@@ -184,6 +210,12 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
 .contador span {
   font-size: 20px;
   font-weight: bold;
+}
+.menos{
+  align-items: center;
+  border: 2px solid black;
+  background-color: #000000;
+  
 }
 
 
@@ -203,5 +235,6 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
 
   }
 }
+
 
   </style>

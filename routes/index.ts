@@ -2,6 +2,7 @@ import express from 'express';
 const {Usuario} = require('../db/models');
 const {Juguete} = require('../db/models'); 
 const {Marca} = require('../db/models')
+const {Pedido} = require('../db/models'); 
 
 const router = express.Router();
 
@@ -315,6 +316,30 @@ router.put('/marca/:id', async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar la marca:', error);
     return res.status(500).json({ message: 'Error al actualizar la marca' });
+  }
+});
+
+router.post("/guardar", async (req, res) => {
+  try {
+    const { usuarioId, jugueteId, cantidad, total } = req.body;
+
+    if (!usuarioId || !jugueteId || !cantidad || !total) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios." });
+    }
+
+    const nuevoPedido = await Pedido.create({
+      usuarioId,
+      jugueteId,
+      cantidad,
+      total,
+      estadoEntrega: "en espera", // Estado inicial del pedido
+      fecha: new Date()
+    });
+
+    res.status(201).json({ mensaje: "Pedido guardado exitosamente", pedido: nuevoPedido });
+  } catch (error) {
+    console.error("Error al guardar el pedido:", error);
+    res.status(500).json({ error: "No se pudo guardar el pedido" });
   }
 });
 
