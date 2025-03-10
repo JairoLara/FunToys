@@ -10,63 +10,47 @@ import Admin from '@/views/admin/AdminProducts.vue'
 import AdminProductDetail from '@/views/admin/AdminProductDetail.vue'
 import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      name: 'login',
-      component: Login,
+    { path: '/login', 
+      name: 'login', 
+      component: Login 
     },
-
-    {
-      path : '/register',
-      name : 'Register',
-      component : Register
+    { path: '/register', 
+      name: 'register', 
+      component: Register 
     },
-    {
-      path : '/products',
-      name : 'products',
-      component : Products
+    { path: '/', 
+      name: 'products', component: Products 
     },
-    {
-      path : '/pay',
-      name : 'pay',
-      component : Pago
+    { path: '/pay', 
+      name: 'pay', 
+      component: Pago 
     },
-    {
-      path : '/product/:id',
-      name : 'product',
-      component : Product
+    { path: '/product/:id', 
+      name: 'product', 
+      component: Product 
     },
-    {
-      path: '/producto-marca/:id',
-      name: 'ProductoMarca',
-      component: ProductoMarca,
-      props: true
+    { path: '/producto-marca/:id', name: 'ProductoMarca', 
+      component: ProductoMarca, props: true 
     },
-    {
-      path : '/favoritos',
-      name : 'favoritos',
-      component : Favoritos
+    { path: '/favoritos', 
+      name: 'favoritos', 
+      component: Favoritos 
     },
-    {
-      path : '/admin',
-      name : 'admin',
-      component : Admin
+    { path: '/admin', 
+      name: 'admin', component: Admin
     },
-    {
-      path: '/productadmin/:id',
-      name: 'productpdmin',
-      component: AdminProductDetail,
+    { path: '/productadmin/:id', 
+      name: 'productadmin', 
+      component: AdminProductDetail
     },
-    {
-      path: '/productsbrands/:id',
-      name: 'productsbrands',
-      component: AdminProductsBrans,
+    { path: '/productsbrands/:id', 
+      name: 'productsbrands', 
+      component: AdminProductsBrans
     }
-  ],
-})
+  ]
+});
 
-export default router
+export default router;

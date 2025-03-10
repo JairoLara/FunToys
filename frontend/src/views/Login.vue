@@ -74,7 +74,7 @@ const handleLogin = async () => {
       if (data.rol === 'admin') {
         router.push('/admin');
       } else {
-        router.push('/products');
+        router.push('/');
       }
     } else {
       throw new Error("No se recibió el ID del usuario en la respuesta.");

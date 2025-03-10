@@ -41,29 +41,29 @@
           </div>
           <div class="icons">
             <div>
-    <div @click="abrirModal" class="cursor-pointer">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="34px"
-        viewBox="0 -960 960 960"
-        width="34px"
-        fill="#5985E1"
-      >
-        <path
-          d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"
-        />
-      </svg>
-    </div>
+              <div @click="abrirModal" class="cursor-pointer">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="34px"
+      viewBox="0 -960 960 960"
+      width="34px"
+      fill="#5985E1"
+    >
+      <path
+        d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"
+      />
+    </svg>
+  </div>
 
-    <!-- Modal -->
-    <div v-if="mostrarModal" class="modal-overlay">
-      <div class="modal-content">
-        <h2 class="modal-title">Perfil</h2>
-        <p class="modal-text">👤 {{ nombreUsuario }}</p>
-        <button @click="cerrarSesion" class="modal-button">Cerrar sesión</button>
-        <button @click="cerrarModal" class="modal-close">✖</button>
-      </div>
+  <!-- Modal -->
+  <div v-if="mostrarModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 class="modal-title">Perfil</h2>
+      <p class="modal-text">👤 {{ nombreUsuario }}</p>
+      <button @click="cerrarSesion" class="modal-button">{{ botonTexto }}</button>
+      <button @click="cerrarModal" class="modal-close">✖</button>
     </div>
+  </div>
   </div>
           </div>
         </div>
@@ -122,6 +122,8 @@
 
   const mostrarModal = ref(false);
 const nombreUsuario = ref("");
+const usuarioId = ref(localStorage.getItem("usuario_id"));
+const botonTexto = ref("Cerrar sesión");
 
 // Función para abrir el modal
 const abrirModal = () => {
@@ -136,13 +138,27 @@ const cerrarModal = () => {
 // Obtener nombre del usuario desde localStorage
 onMounted(() => {
   const usuarioNombre = localStorage.getItem("usuario_nombre");
-  nombreUsuario.value = usuarioNombre ? usuarioNombre : "Usuario";
+  nombreUsuario.value = usuarioNombre ? usuarioNombre : "";
+
+  // Comprobar si hay sesión activa y cambiar el texto del botón
+  if (!usuarioId.value) {
+    botonTexto.value = "Iniciar sesión"; // Cambiar texto si no hay sesión activa
+  }
 });
 
 // Función para cerrar sesión
 const cerrarSesion = () => {
-  localStorage.removeItem("token"); // Eliminar token
-  window.location.href = "/"; // Redirigir al login
+  if (usuarioId.value) {
+    // Si hay sesión activa, cerrar sesión
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario_id");
+    localStorage.removeItem("usuario_nombre");
+    localStorage.removeItem("usuario_rol");
+    window.location.href = "/login";
+  } else {
+    // Si no hay sesión activa, redirigir al login
+    window.location.href = "/login";
+  }
 };
   </script>
 
