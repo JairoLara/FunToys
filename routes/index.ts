@@ -3,6 +3,7 @@ const {Usuario} = require('../db/models');
 const {Juguete} = require('../db/models'); 
 const {Marca} = require('../db/models')
 const {Pedido} = require('../db/models'); 
+const {Favorito} = require('../db/models')
 
 const router = express.Router();
 
@@ -343,6 +344,94 @@ router.post("/guardar", async (req, res) => {
   }
 });
 
+//favoritos
+router.post("/favorito", async (req, res) => {
+  try {
+    const { usuarioId, jugueteId } = req.body;
 
+    // Validar que los campos necesarios estén presentes
+    if (!usuarioId || !jugueteId) {
+      return res.status(400).json({ error: "usuarioId y jugueteId son obligatorios." });
+    }
+
+    // Verificar si el juguete ya está en favoritos
+    const favoritoExistente = await Favorito.findOne({
+      where: { usuarioId, jugueteId }
+    });
+
+    if (favoritoExistente) {
+      return res.status(400).json({ error: "El juguete ya está en favoritos." });
+    }
+
+    // Crear el nuevo favorito
+    const nuevoFavorito = await Favorito.create({
+      usuarioId,
+      jugueteId,
+    });
+
+    // Responder con éxito
+    res.status(201).json({ mensaje: "Juguete agregado a favoritos", favorito: nuevoFavorito });
+  } catch (error) {
+    console.error("Error al agregar a favoritos:", error);
+    res.status(500).json({ error: "No se pudo agregar el juguete a favoritos" });
+  }
+});
+//obt. fav
+router.get("/favoritos/:usuarioId", async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+
+    if (!usuarioId) {
+      return res.status(400).json({ error: "usuarioId es obligatorio." });
+    }
+
+    const favoritos = await Favorito.findAll({
+      where: { usuarioId },
+      include: [
+        {
+          model: Juguete,
+          as: "juguete",
+        },
+      ],
+    });
+
+    console.log("Favoritos encontrados:", favoritos); // 🔍 Verifica en consola
+
+    if (favoritos.length === 0) {
+      return res.status(404).json({ mensaje: "No tienes favoritos." });
+    }
+
+    res.status(200).json(favoritos);
+  } catch (error) {
+    console.error("Error al recuperar los favoritos:", error);
+    res.status(500).json({ error: "No se pudo recuperar los favoritos." });
+  }
+});
+//eliminar fav
+router.delete("/favorito", async (req, res) => {
+  try {
+    const { usuarioId, jugueteId } = req.body;
+
+    if (!usuarioId || !jugueteId) {
+      return res.status(400).json({ error: "usuarioId y jugueteId son obligatorios." });
+    }
+
+    // Buscar y eliminar el favorito
+    const favorito = await Favorito.findOne({
+      where: { usuarioId, jugueteId },
+    });
+
+    if (!favorito) {
+      return res.status(404).json({ error: "El juguete no está en favoritos." });
+    }
+
+    await favorito.destroy(); // Elimina el favorito de la base de datos
+
+    res.status(200).json({ mensaje: "Juguete eliminado de favoritos." });
+  } catch (error) {
+    console.error("Error al eliminar de favoritos:", error);
+    res.status(500).json({ error: "No se pudo eliminar el juguete de favoritos." });
+  }
+});
 
 export default router;

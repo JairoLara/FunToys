@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-content">
-      <router-link to="/products">
+      <router-link to="/">
       <img
         src="../images/logo_completo_png-removebg-preview.png"
         alt="FunToys Logo"
@@ -140,38 +140,31 @@ const nombreUsuario = ref("");
 const usuarioId = ref(localStorage.getItem("usuario_id"));
 const botonTexto = ref("Cerrar sesión");
 
-// Función para abrir el modal
 const abrirModal = () => {
   mostrarModal.value = true;
 };
 
-// Función para cerrar el modal
 const cerrarModal = () => {
   mostrarModal.value = false;
 };
 
-// Obtener nombre del usuario desde localStorage
 onMounted(() => {
   const usuarioNombre = localStorage.getItem("usuario_nombre");
   nombreUsuario.value = usuarioNombre ? usuarioNombre : "";
 
-  // Comprobar si hay sesión activa y cambiar el texto del botón
   if (!usuarioId.value) {
-    botonTexto.value = "Iniciar sesión"; // Cambiar texto si no hay sesión activa
+    botonTexto.value = "Iniciar sesión";
   }
 });
 
-// Función para cerrar sesión
 const cerrarSesion = () => {
   if (usuarioId.value) {
-    // Si hay sesión activa, cerrar sesión
     localStorage.removeItem("token");
     localStorage.removeItem("usuario_id");
     localStorage.removeItem("usuario_nombre");
     localStorage.removeItem("usuario_rol");
     window.location.href = "/";
   } else {
-    // Si no hay sesión activa, redirigir al login
     window.location.href = "/login";
   }
 };

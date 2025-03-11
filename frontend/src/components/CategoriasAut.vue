@@ -43,21 +43,23 @@ const irAProductoMarca = (id: number) => {
 };
 
 const iniciarCarrusel = () => {
-    if (carruselRef.value) {
-        intervalo = setInterval(() => {
-            if (direccion === "derecha") {
-                carruselRef.value!.scrollLeft += 1;
-                if (carruselRef.value!.scrollLeft >= carruselRef.value!.scrollWidth / 20) {
-                    direccion = "izquierda";
-                }
-            } else {
-                carruselRef.value!.scrollLeft -= 1;
-                if (carruselRef.value!.scrollLeft <= 0) {
-                    direccion = "derecha";
-                }
+    if (!carruselRef.value) return; 
+
+    intervalo = setInterval(() => {
+        if (!carruselRef.value) return; 
+
+        if (direccion === "derecha") {
+            carruselRef.value.scrollLeft += 1;
+            if (carruselRef.value.scrollLeft >= carruselRef.value.scrollWidth / 20) {
+                direccion = "izquierda";
             }
-        }, 20);
-    }
+        } else {
+            carruselRef.value.scrollLeft -= 1;
+            if (carruselRef.value.scrollLeft <= 0) {
+                direccion = "derecha";
+            }
+        }
+    }, 20);
 };
 
 const pausarCarrusel = () => {

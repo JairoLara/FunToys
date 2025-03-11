@@ -67,7 +67,7 @@ const handleRegister = async () => {
       nombre.value = '';
       email.value = '';
       contraseña.value = '';
-      router.push('/');
+      router.push('/login');
     });
 
   } catch (error) {

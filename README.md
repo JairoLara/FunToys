@@ -14,7 +14,7 @@ DESCARGA DESPUES DE CLONAR:
 
 //todo a la shet 
 
-npm install -g ts-node typescript nodemon sequelize-cli mysql2 dotenv
+npm install -g ts-node typescript nodemon sequelize-cli mysql2 dotenv express
 
 REQUEST DE API: (opcional)
 
@@ -22,4 +22,4 @@ REQUEST DE API: (opcional)
 
 //instalar npm install cors
 
-npm install sweetalert2 cors axios
+npm install sweetalert2 cors axios express

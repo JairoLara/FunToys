@@ -58,20 +58,37 @@ const obtenerFavoritos = () => {
 };
 
 // Función para agregar a favoritos (sin eliminar)
-const agregarAFavoritos = () => {
+const agregarAFavoritos = async () => {
   const userId = localStorage.getItem("usuario_id"); // Obtiene usuario actualizado
   if (!userId) {
     alert("Debes iniciar sesión para agregar a favoritos.");
     return;
   }
 
-  let favoritos = obtenerFavoritos(); // Obtiene favoritos del usuario actual
-  if (producto.value && !favoritos.some((p: Producto) => p.id === producto.value?.id)) {
-    favoritos.push(producto.value);
-    localStorage.setItem(`favoritos_${userId}`, JSON.stringify(favoritos)); // Guarda con clave única
-    alert("Producto agregado a favoritos");
-  } else {
-    alert("Este producto ya está en favoritos");
+  if (!producto.value) return;
+
+  try {
+    const response = await fetch("http://localhost:7000/api/favorito", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        usuarioId: userId,
+        jugueteId: producto.value.id,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(data.mensaje); // Muestra el mensaje de éxito
+    } else {
+      alert(data.error); // Muestra el error si no es exitoso
+    }
+  } catch (error) {
+    console.error("Error al agregar a favoritos:", error);
+    alert("Hubo un error al agregar a favoritos.");
   }
 };
 
@@ -126,7 +143,6 @@ const comprar = () => {
     }
   });
 };
-
 
 const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
 </script>
