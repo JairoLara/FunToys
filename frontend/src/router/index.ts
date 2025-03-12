@@ -13,44 +13,53 @@ import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/login', 
-      name: 'login', 
-      component: Login 
+    { path: '/login',
+      name: 'login',
+      component: Login
     },
-    { path: '/register', 
-      name: 'register', 
-      component: Register 
+    { path: '/register',
+       name: 'register',
+       component: Register
     },
-    { path: '/', 
-      name: 'products', component: Products 
+    { path: '/',
+      name: 'products',
+      component: Products
     },
-    { path: '/pay', 
-      name: 'pay', 
-      component: Pago 
+    { path: '/pay',
+      name: 'pay',
+      component: Pago
     },
-    { path: '/product/:id', 
-      name: 'product', 
-      component: Product 
+    { path: '/product/:id',
+      name: 'product',
+      component: Product
     },
-    { path: '/producto-marca/:id', name: 'ProductoMarca', 
-      component: ProductoMarca, props: true 
+    { path: '/producto-marca/:id',
+      name: 'ProductoMarca',
+      component: ProductoMarca,
+      props: true
     },
-    { path: '/favoritos', 
-      name: 'favoritos', 
-      component: Favoritos 
+    { path: '/favoritos',
+      name: 'favoritos',
+      component: Favoritos
     },
-    { path: '/admin', 
-      name: 'admin', component: Admin
-    },
-    { path: '/productadmin/:id', 
-      name: 'productadmin', 
-      component: AdminProductDetail
-    },
-    { path: '/productsbrands/:id', 
-      name: 'productsbrands', 
-      component: AdminProductsBrans
-    }
+
+
+    { path: '/admin', name: 'admin', component: Admin, meta: { requiresAdmin: true } },
+    { path: '/productadmin/:id', name: 'productadmin', component: AdminProductDetail, meta: { requiresAdmin: true } },
+    { path: '/productsbrands/:id', name: 'productsbrands', component: AdminProductsBrans, meta: { requiresAdmin: true } }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  const usuarioRol = localStorage.getItem('usuario_rol');
+
+  if (to.meta.requiresAdmin && usuarioRol !== 'admin') {
+    return next('/');
+  }
+  next();
+});
+
+
+
 
 export default router;

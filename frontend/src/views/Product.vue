@@ -1,7 +1,6 @@
 <template>
   <NavBar />
   <div v-if="producto" class="producto-container">
-    <a class="link" href="/"><strong>Volver</strong></a>
     <div class="producto-imagen">
       <img :src="producto.imagen" :alt="producto.nombre"/>
     </div>
@@ -20,7 +19,7 @@
 
       <button @click="comprar">Comprar ahora</button>
       <button @click="agregarAlCarrito">Agregar al carrito</button>
-      <button @click="agregarAFavoritos">Agregar a favoritos</button>  
+      <button @click="agregarAFavoritos">Agregar a favoritos</button>
       <!-- Solo agrega, no permite eliminar -->
     </div>
   </div>
@@ -231,7 +230,7 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
   align-items: center;
   border: 2px solid black;
   background-color: #000000;
-  
+
 }
 
 
