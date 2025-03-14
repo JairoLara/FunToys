@@ -2,8 +2,9 @@
   <!-- Modal para agregar administrador -->
   <div v-if="mostrarModal" class="modal-overlay" @click="cerrarModal">
     <div class="modal-content" @click.stop>
-      <h3>Registrar Administrador</h3>
+
       <form @submit.prevent="registrarAdmin">
+        <h3>Registrar Administrador</h3>
         <div>
           <label for="nombre">Nombre:</label>
           <input type="text" v-model="nuevoAdmin.nombre" id="nombre" required />
@@ -14,7 +15,7 @@
         </div>
         <div>
           <label for="contraseña">Contraseña:</label>
-          <input type="contraseña" v-model="nuevoAdmin.contraseña" id="contraseña" required />
+          <input type="password" v-model="nuevoAdmin.contraseña" id="contraseña" required />
         </div>
         <div>
           <label>Rol:</label>
@@ -72,24 +73,28 @@ const abrirModal = () => (mostrarModal.value = true);
   background-color: rgba(92, 77, 5, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
   z-index: 1000;
 }
 
 .modal-content {
-  background-color: #f7d85d;
-  padding: 30px;
-  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #edf6f6;
+  padding: 10px;
+  border-radius: 10px;
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
+  margin: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  overflow-y: auto;
 }
 
-h2 {
-  color: #f6e95e; 
-  font-size: 24px;
-  margin-bottom: 20px;
+h3 {
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+  margin-bottom: 50px;
 }
 
 .input-group {
@@ -99,14 +104,16 @@ h2 {
 }
 
 label {
+  display: flex;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-top: 25px;
+  font-size: 18px;
 }
 
 input {
+  width: 100%;
   padding: 10px;
-  border: 2px solid #ab8f03;
   border-radius: 8px;
   font-size: 16px;
   outline: none;
@@ -120,23 +127,31 @@ input:focus {
 
 .modal-buttons {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin-top: 20px;
 }
-
 button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
-  background-color: #a79527; 
+  background-color: cornflowerblue;
   color: white;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: all 0.3s ease;
+  margin: 6px;
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+}
+
+button[type="button"]:hover {
+  background-color: #5a6268;
 }
 
 button:hover {
-  background-color: #6d7503;
+  background-color: rgb(41, 78, 147);
 }
 
 button:focus {
@@ -147,4 +162,23 @@ button:disabled {
   background-color: #070707;
   cursor: not-allowed;
 }
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 20px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+/* Fondo oscuro con efecto de desvanecimiento */
+.modal-overlay.show {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
 </style>

@@ -1,35 +1,30 @@
 <template>
   <AdminNavBar />
 
-  <CategoriasNav />
-  <div class="container-admin">
-    <h1>Panel de Administración</h1>
-    <AggProduct
-      :mostrarModal="mostrarModal"
-      :setMostrarModal="setMostrarModal"
-    />
-
-    <RegisterAdmin
-      :mostrarModal="mostrarModal"
-      :setMostrarModal="setMostrarModal"
-    />
-  </div>
-  <AdminCatnav />
-
+  <AdminCategoriasNav />
 
   <!-- Carrusel Ofertas -->
   <div class="carousel-container">
-    <h2 style="text-align: start;">Ofertas</h2>
+    <h2 style="text-align: start">Ofertas</h2>
     <button class="arrow left" @click="scrollLeft('ofertaCarousel')">❮</button>
     <div class="carousel-wrapper">
       <div class="carousel" ref="ofertaCarousel" @scroll="updateScroll('ofertaCarousel')">
-        <div v-for="juguete in juguetesEnOferta" :key="juguete.id" class="carousel-item" @click="iradetalle(juguete.id)">
+        <div
+          v-for="juguete in juguetesEnOferta"
+          :key="juguete.id"
+          class="carousel-item"
+          @click="iradetalle(juguete.id)"
+        >
           <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
           <h3>{{ juguete.nombre }}</h3>
           <p class="precio oferta">Oferta: ${{ juguete.precio }}</p>
         </div>
       </div>
-      <div class="scroll-bar" ref="ofertaScrollBar" @mousedown="startDrag('ofertaCarousel', $event)"></div>
+      <div
+        class="scroll-bar"
+        ref="ofertaScrollBar"
+        @mousedown="startDrag('ofertaCarousel', $event)"
+      ></div>
     </div>
     <button class="arrow right" @click="scrollRight('ofertaCarousel')">❯</button>
   </div>
@@ -40,141 +35,134 @@
     <button class="arrow left" @click="scrollLeft('productosCarousel')">❮</button>
     <div class="carousel-wrapper">
       <div class="carousel" ref="productosCarousel" @scroll="updateScroll('productosCarousel')">
-        <div v-for="juguete in juguetes" :key="juguete.id" class="carousel-item" @click="iradetalle(juguete.id)">
+        <div
+          v-for="juguete in juguetes"
+          :key="juguete.id"
+          class="carousel-item"
+          @click="iradetalle(juguete.id)"
+        >
           <img :src="juguete.imagen" :alt="juguete.nombre" class="imagen" />
           <h3>{{ juguete.nombre }}</h3>
           <span class="precio">Precio: ${{ juguete.precio }}</span>
         </div>
       </div>
-      <div class="scroll-bar" ref="productosScrollBar" @mousedown="startDrag('productosCarousel', $event)"></div>
+      <div
+        class="scroll-bar"
+        ref="productosScrollBar"
+        @mousedown="startDrag('productosCarousel', $event)"
+      ></div>
     </div>
     <button class="arrow right" @click="scrollRight('productosCarousel')">❯</button>
   </div>
-
-  <AggProduct
-      :mostrarModal="mostrarModal"
-      :setMostrarModal="setMostrarModal"
-    />
-
-    <RegisterAdmin
-      :mostrarModal="mostrarModal"
-      :setMostrarModal="setMostrarModal"
-    />
 
   <Footer />
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-const router = useRouter();
-import { ref, onMounted } from "vue";
-import Footer from "@/components/footer.vue";
-import AdminNavBar from '@/components/admin/AdminNav.vue';
-import AdminCatnav from '@/components/admin/AdminCatnav.vue';
-import CategoriasNav from '@/components/CategoriasNav.vue';
-import AggProduct from "@/components/admin/AggProduct.vue";
-import RegisterAdmin from '@/components/admin/RegisterAdmin.vue';
-
-
-const mostrarModal = ref(false);
-
-// Cambiar el valor de mostrarModal para mostrar u ocultar el modal
-const setMostrarModal = (valor: boolean) => {
-  mostrarModal.value = valor;
-};
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
+import { ref, onMounted } from 'vue'
+import Footer from '@/components/footer.vue'
+import AdminNavBar from '@/components/admin/AdminNav.vue'
+import AdminCatnav from '@/components/admin/AdminCatnav.vue'
+import CategoriasNav from '@/components/CategoriasNav.vue'
+import AdminCategoriasNav from '@/components/admin/AdminCategoriasNav.vue'
 
 interface Juguete {
-  id: number;
-  nombre: string;
-  precio: number;
-  imagen: string;
+  id: number
+  nombre: string
+  precio: number
+  imagen: string
 }
 
-const juguetes = ref<Juguete[]>([]);
-const juguetesEnOferta = ref<Juguete[]>([]);
-const ofertaCarousel = ref<HTMLElement | null>(null);
-const productosCarousel = ref<HTMLElement | null>(null);
-const ofertaScrollBar = ref<HTMLElement | null>(null);
-const productosScrollBar = ref<HTMLElement | null>(null);
-let isDragging = false;
-let startX = 0;
-let scrollLeftStart = 0;
+const juguetes = ref<Juguete[]>([])
+const juguetesEnOferta = ref<Juguete[]>([])
+const ofertaCarousel = ref<HTMLElement | null>(null)
+const productosCarousel = ref<HTMLElement | null>(null)
+const ofertaScrollBar = ref<HTMLElement | null>(null)
+const productosScrollBar = ref<HTMLElement | null>(null)
+let isDragging = false
+let startX = 0
+let scrollLeftStart = 0
 
 onMounted(async () => {
   try {
-    const response = await fetch("http://localhost:7000/api/juguetes");
-    if (!response.ok) throw new Error("No se pudo obtener la lista de juguetes");
-    const data = await response.json();
-    juguetes.value = data;
+    const response = await fetch('http://localhost:7000/api/juguetes')
+    if (!response.ok) throw new Error('No se pudo obtener la lista de juguetes')
+    const data = await response.json()
+    juguetes.value = data
 
-    const ofertasGuardadas = localStorage.getItem("juguetesEnOferta");
+    const ofertasGuardadas = localStorage.getItem('juguetesEnOferta')
     if (ofertasGuardadas) {
-      juguetesEnOferta.value = JSON.parse(ofertasGuardadas);
+      juguetesEnOferta.value = JSON.parse(ofertasGuardadas)
     } else {
-      const seleccionados = seleccionarDeterminados(data, 5);
-      juguetesEnOferta.value = seleccionados;
-      localStorage.setItem("juguetesEnOferta", JSON.stringify(seleccionados));
+      const seleccionados = seleccionarDeterminados(data, 5)
+      juguetesEnOferta.value = seleccionados
+      localStorage.setItem('juguetesEnOferta', JSON.stringify(seleccionados))
     }
   } catch (err) {
-    console.error(err);
+    console.error(err)
   }
-});
+})
 
 const seleccionarDeterminados = (lista: Juguete[], cantidad: number) => {
-  return lista.slice().sort((a, b) => a.id - b.id).slice(0, cantidad);
-};
+  return lista
+    .slice()
+    .sort((a, b) => a.id - b.id)
+    .slice(0, cantidad)
+}
 
 const iradetalle = (id: number) => {
-  router.push(`/productadmin/${id}`);
-};
+  router.push(`/productadmin/${id}`)
+}
 
 const scrollLeft = (carouselRef: string) => {
-  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  const carousel = carouselRef === 'ofertaCarousel' ? ofertaCarousel.value : productosCarousel.value
   if (carousel) {
-    carousel.scrollBy({ left: -250, behavior: "smooth" });
+    carousel.scrollBy({ left: -250, behavior: 'smooth' })
   }
-};
+}
 
 const scrollRight = (carouselRef: string) => {
-  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  const carousel = carouselRef === 'ofertaCarousel' ? ofertaCarousel.value : productosCarousel.value
   if (carousel) {
-    carousel.scrollBy({ left: 250, behavior: "smooth" });
+    carousel.scrollBy({ left: 250, behavior: 'smooth' })
   }
-};
+}
 
 const updateScroll = (carouselRef: string) => {
-  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
-  const scrollBar = carouselRef === "ofertaCarousel" ? ofertaScrollBar.value : productosScrollBar.value;
+  const carousel = carouselRef === 'ofertaCarousel' ? ofertaCarousel.value : productosCarousel.value
+  const scrollBar =
+    carouselRef === 'ofertaCarousel' ? ofertaScrollBar.value : productosScrollBar.value
 
   if (carousel && scrollBar) {
-    const scrollPercentage = carousel.scrollLeft / (carousel.scrollWidth - carousel.clientWidth);
-    scrollBar.style.left = `${scrollPercentage * 100}%`;
+    const scrollPercentage = carousel.scrollLeft / (carousel.scrollWidth - carousel.clientWidth)
+    scrollBar.style.left = `${scrollPercentage * 100}%`
   }
-};
+}
 
 const startDrag = (carouselRef: string, event: MouseEvent) => {
-  isDragging = true;
-  startX = event.clientX;
-  const carousel = carouselRef === "ofertaCarousel" ? ofertaCarousel.value : productosCarousel.value;
+  isDragging = true
+  startX = event.clientX
+  const carousel = carouselRef === 'ofertaCarousel' ? ofertaCarousel.value : productosCarousel.value
   if (carousel) {
-    scrollLeftStart = carousel.scrollLeft;
-    document.addEventListener("mousemove", (e) => onDrag(e, carousel));
-    document.addEventListener("mouseup", stopDrag);
+    scrollLeftStart = carousel.scrollLeft
+    document.addEventListener('mousemove', (e) => onDrag(e, carousel))
+    document.addEventListener('mouseup', stopDrag)
   }
-};
+}
 
 const onDrag = (event: MouseEvent, carousel: HTMLElement) => {
-  if (!isDragging) return;
-  const moveX = event.clientX - startX;
-  carousel.scrollLeft = scrollLeftStart - moveX;
-};
+  if (!isDragging) return
+  const moveX = event.clientX - startX
+  carousel.scrollLeft = scrollLeftStart - moveX
+}
 
 const stopDrag = () => {
-  isDragging = false;
-  document.removeEventListener("mousemove", onDrag as any);
-  document.removeEventListener("mouseup", stopDrag);
-};
+  isDragging = false
+  document.removeEventListener('mousemove', onDrag as any)
+  document.removeEventListener('mouseup', stopDrag)
+}
 </script>
 
 <style scoped>
@@ -183,7 +171,7 @@ h3 {
   margin: 10px 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow:clip;
+  text-overflow: clip;
   max-width: 180px;
 }
 
@@ -194,9 +182,9 @@ h2 {
 
 .carousel-container {
   position: relative;
-  margin: 20px 0;
-  overflow: hidden;
-  padding: 10px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .carousel-wrapper {
@@ -296,11 +284,10 @@ h3 {
 .container-admin {
   display: flex;
   align-items: center;
- background-color: #fff;
+  background-color: #fff;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: 20px;
-
 }
 </style>

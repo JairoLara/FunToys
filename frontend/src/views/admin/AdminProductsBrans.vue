@@ -202,10 +202,10 @@ button:hover {
 
 .formulario-editar {
   width: 50%;
-  margin: auto;
+  margin: 20px auto;
   padding: 20px;
   background: white;
-  border-radius: 10px;
+  border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -215,10 +215,21 @@ button:hover {
 }
 
 .formulario-editar input {
-  width: 100%;
+  margin: 14px 0;
+   width: 90%;
   padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 3px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #000000;
+}
+
+label {
+  display: flex;
+  font-weight: bold;
+  color: #333;
+  margin-top: 15px;
+  font-size: 17px;
 }
 </style>
