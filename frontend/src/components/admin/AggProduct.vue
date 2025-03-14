@@ -2,8 +2,9 @@
   <!-- Modal para agregar producto -->
   <div v-if="mostrarModal" class="modal-overlay" @click="cerrarModal">
     <div class="modal-content" @click.stop>
-      <h3>Agregar Producto</h3>
+
       <form @submit.prevent="agregarProducto">
+        <h3>Agregar Producto</h3>
         <!-- Formulario de agregar producto -->
         <div>
           <label for="nombre">Nombre:</label>
@@ -40,8 +41,9 @@
       </form>
 
       <!-- Formulario para agregar una nueva marca -->
-      <h3>Agregar Marca</h3>
-      <form @submit.prevent="agregarMarca">
+
+      <form class="marca"  @submit.prevent="agregarMarca">
+        <h3>Agregar Marca</h3>
         <div>
           <label for="marcaNombre">Nombre de la Marca:</label>
           <input type="text" v-model="nuevaMarca.nombre" id="marcaNombre" required />
@@ -191,24 +193,25 @@ const abrirModal = () => {
   background-color: rgba(92, 77, 5, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
   z-index: 1000;
 }
 
 .modal-content {
-  background-color: #f7d85d;
+  display: flex;
+  background-color: #edf6f6;
   padding: 30px;
-  border-radius: 50px;
+  border-radius: 10px;
   width: 100%;
-  max-width: 500px;
+  max-width: 800px;
+  margin: 40px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
   overflow-y: auto;
 }
 
-h2 {
-  color: #f6e95e;
-  font-size: 24px;
+h3 {
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
   margin-bottom: 20px;
 }
 
@@ -219,14 +222,16 @@ h2 {
 }
 
 label {
+  display: flex;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-top: 15px;
+  font-size: 18px;
 }
 
 input {
+  width: 100%;
   padding: 10px;
-  border: 2px solid #ab8f03;
   border-radius: 8px;
   font-size: 16px;
   outline: none;
@@ -243,16 +248,20 @@ input:focus {
   justify-content: space-between;
   margin-top: 20px;
 }
+.marca{
+  margin-left: 80px;
+}
 
 button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
-  background-color: #a79527;
+  background-color: cornflowerblue;
   color: white;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: all 0.3s ease;
+  margin: 6px;
 }
 
 button[type="button"] {
@@ -264,7 +273,7 @@ button[type="button"]:hover {
 }
 
 button:hover {
-  background-color: #6d7503;
+  background-color: rgb(41, 78, 147);
 }
 
 button:focus {

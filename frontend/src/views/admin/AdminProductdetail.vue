@@ -1,7 +1,6 @@
 <template>
   <AdminNav />
   <div v-if="producto" class="producto-container">
-    <a class="link" href="/admin"><strong>Volver</strong></a>
     <div class="producto-imagen">
       <img :src="producto.imagen" :alt="producto.nombre" />
     </div>
@@ -161,10 +160,10 @@ const eliminarProducto = async () => {
 }
 
 button {
-  width: 60%;
+  width: 50%;
   margin: 10px;
   padding: 10px;
-  border-radius: 30px;
+  border-radius: 10px;
   background-color: #fb5355;
   color: white;
   font-size: 20px;
@@ -190,18 +189,26 @@ button:hover {
 }
 
 .modal-contenido {
-  background: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 45%;
+  margin: 20px auto;
   padding: 20px;
-  border-radius: 10px;
-  text-align: center;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .modal-contenido input {
   display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  margin: 14px 0;
+   width: 90%;
+  padding: 10px;
+  border-radius: 3px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #000000;
 }
 </style>
