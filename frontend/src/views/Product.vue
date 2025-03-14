@@ -3,7 +3,7 @@
   <div v-if="producto" class="producto-container">
     <a class="link" href="/"><strong>Volver</strong></a>
     <div class="producto-imagen">
-      <img :src="producto.imagen" :alt="producto.nombre"/>
+      <img :src="producto.imagen" :alt="producto.nombre" />
     </div>
 
     <div class="producto-info">
@@ -21,7 +21,6 @@
       <button @click="comprar">Comprar ahora</button>
       <button @click="agregarAlCarrito">Agregar al carrito</button>
       <button @click="agregarAFavoritos">Agregar a favoritos</button>  
-      <!-- Solo agrega, no permite eliminar -->
     </div>
   </div>
 
@@ -33,6 +32,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+import Swal from "sweetalert2";
 import NavBar from '@/components/NavBar.vue';
 
 interface Producto {
@@ -45,73 +46,18 @@ interface Producto {
 
 const producto = ref<Producto | null>(null);
 const route = useRoute();
-const router = useRouter()
+const router = useRouter();
 const cantidad = ref(1);
-const usuarioId = ref(localStorage.getItem("usuario_id") || ""); // ID del usuario autenticado
-
-// Obtener la lista de favoritos del usuario desde localStorage
-const obtenerFavoritos = () => {
-  const userId = localStorage.getItem("usuario_id"); // Obtiene usuario actualizado
-  if (!userId) return []; // Si no hay usuario, retorna lista vacía
-  const favoritos = localStorage.getItem(`favoritos_${userId}`);
-  return favoritos ? JSON.parse(favoritos) : [];
-};
-
-// Función para agregar a favoritos (sin eliminar)
-const agregarAFavoritos = async () => {
-  const userId = localStorage.getItem("usuario_id"); // Obtiene usuario actualizado
-  if (!userId) {
-    alert("Debes iniciar sesión para agregar a favoritos.");
-    return;
-  }
-
-  if (!producto.value) return;
-
-  try {
-    const response = await fetch("http://localhost:7000/api/favorito", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        usuarioId: userId,
-        jugueteId: producto.value.id,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert(data.mensaje); // Muestra el mensaje de éxito
-    } else {
-      alert(data.error); // Muestra el error si no es exitoso
-    }
-  } catch (error) {
-    console.error("Error al agregar a favoritos:", error);
-    alert("Hubo un error al agregar a favoritos.");
-  }
-};
-
-// Función para eliminar un producto de favoritos
-const eliminarDeFavoritos = (productoId: number) => {
-  const userId = localStorage.getItem("usuario_id");
-  if (!userId) return;
-
-  let favoritos = obtenerFavoritos().filter((p: Producto) => p.id !== productoId);
-  localStorage.setItem(`favoritos_${userId}`, JSON.stringify(favoritos));
-  alert("Producto eliminado de favoritos");
-};
+const usuarioId = ref(localStorage.getItem("usuario_id") || "");
 
 // Obtener el producto según el ID de la ruta
 onMounted(async () => {
   const productoId = Number(route.params.id);
   try {
-    const response = await fetch("http://localhost:7000/api/juguetes");
-    if (!response.ok) throw new Error("No se pudo cargar el producto");
-    const data: Producto[] = await response.json();
-    producto.value = data.find((j) => j.id === productoId) || null;
+    const response = await axios.get("http://localhost:7000/api/juguetes");
+    producto.value = response.data.find((j: Producto) => j.id === productoId) || null;
   } catch (err) {
-    console.error(err);
+    console.error("Error al cargar el producto:", err);
   }
 });
 
@@ -119,19 +65,56 @@ onMounted(async () => {
 const aumentarCantidad = () => cantidad.value++;
 const disminuirCantidad = () => { if (cantidad.value > 1) cantidad.value--; };
 
-// Funciones de compra y carrito
-const comprar = () => {
-  if (!producto.value) {
-    alert("Error: No se encontró el producto.");
+// Función para agregar al carrito
+const agregarAlCarrito = async () => {
+  if (!usuarioId.value) {
+    Swal.fire("Error", "Debes iniciar sesión para agregar productos al carrito.", "warning");
     return;
   }
 
-  console.log("Navegando a vista de pago con:", {
-    id: producto.value.id,
-    nombre: producto.value.nombre,
-    cantidad: cantidad.value,
-    precio: producto.value.precio
-  });
+  if (!producto.value) return;
+
+  try {
+    const response = await axios.post("http://localhost:7000/api/carrito", {
+      usuarioId: Number(usuarioId.value),
+      jugueteId: producto.value.id,
+    });
+
+    Swal.fire("Éxito", "El producto ha sido agregado al carrito.", "success");
+  } catch (error) {
+    console.error("Error al agregar al carrito:", error);
+    Swal.fire("Error", "Hubo un problema al agregar el producto al carrito.", "error");
+  }
+};
+
+// Función para agregar a favoritos
+const agregarAFavoritos = async () => {
+  if (!usuarioId.value) {
+    Swal.fire("Error", "Debes iniciar sesión para agregar a favoritos.", "warning");
+    return;
+  }
+
+  if (!producto.value) return;
+
+  try {
+    const response = await axios.post("http://localhost:7000/api/favorito", {
+      usuarioId: Number(usuarioId.value),
+      jugueteId: producto.value.id,
+    });
+
+    Swal.fire("Éxito", "El producto ha sido agregado a favoritos.", "success");
+  } catch (error) {
+    console.error("Error al agregar a favoritos:", error);
+    Swal.fire("Error", "Hubo un problema al agregar el producto a favoritos.", "error");
+  }
+};
+
+// Función para comprar
+const comprar = () => {
+  if (!producto.value) {
+    Swal.fire("Error", "No se encontró el producto.", "error");
+    return;
+  }
 
   router.push({
     name: "pay",
@@ -139,68 +122,68 @@ const comprar = () => {
       id: producto.value.id.toString(),
       nombre: producto.value.nombre,
       cantidad: cantidad.value.toString(),
-      precio: producto.value.precio.toString()
+      precio: producto.value.precio.toString(),
     }
   });
 };
-
-const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} unidad(es) de ${producto.value?.nombre}`);
 </script>
 
-  <style scoped>
-  .link{
-    color: black;
-    text-decoration: none;
-    position: absolute;
-    top: 15%;
-    left: 3%;
-  }
+<style scoped>
+.link {
+  color: black;
+  text-decoration: none;
+  position: absolute;
+  top: 15%;
+  left: 3%;
+}
 
-  .producto-container {
-    display: flex;
-    flex-direction: row; /* Cambiar a fila */
-  align-items: center; /* Alinear elementos verticalmente */
+.producto-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-    margin: 30px;
-    background-color: #ffff;
-    border-radius: 40px;
-  }
+  margin: 30px;
+  background-color: #ffff;
+  border-radius: 40px;
+}
 
-  .producto-imagen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-  }
+.producto-imagen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
 
-  .producto-info {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    width: 50%;
-  }
+.producto-info {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 50%;
+}
 
-  .precio {
-    font-size: 30px;
-    font-weight: bold;
-    color: #28a745;
-  }
-  button{
-    width: 60%;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 30px;
-    background-color: #fb5355;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    border: none;
-  }
-  button:hover{
-    background-color: #ff7b7e;
-  }
+.precio {
+  font-size: 30px;
+  font-weight: bold;
+  color: #28a745;
+}
 
-  .contador {
+button {
+  width: 60%;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 30px;
+  background-color: #fb5355;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background-color: #ff7b7e;
+}
+
+.contador {
   display: flex;
   align-items: center;
   margin: 10px 0;
@@ -227,13 +210,12 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
   font-size: 20px;
   font-weight: bold;
 }
-.menos{
+
+.menos {
   align-items: center;
   border: 2px solid black;
   background-color: #000000;
-  
 }
-
 
 @media (max-width: 768px) {
   .producto-container {
@@ -244,13 +226,10 @@ const agregarAlCarrito = () => alert(`Agregado al carrito: ${cantidad.value} uni
     width: 100%;
     text-align: center;
   }
-  button{
+  button {
     display: flex;
     align-items: center;
     justify-content: center;
-
   }
 }
-
-
-  </style>
+</style>

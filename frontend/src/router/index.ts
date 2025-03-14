@@ -7,6 +7,7 @@ import Product from '@/views/Product.vue'
 import ProductoMarca from '@/views/ProductoMarca.vue'
 import Favoritos from '@/views/Favoritos.vue'
 import Admin from '@/views/admin/AdminProducts.vue'
+import Carrito from '@/views/Carrito.vue'
 import AdminProductDetail from '@/views/admin/AdminProductDetail.vue'
 import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
 
@@ -45,6 +46,10 @@ const router = createRouter({
     { path: '/productadmin/:id', 
       name: 'productadmin', 
       component: AdminProductDetail
+    },
+    { path: '/carrito', 
+      name: 'carrito', 
+      component: Carrito 
     },
     { path: '/productsbrands/:id', 
       name: 'productsbrands', 

@@ -4,6 +4,7 @@ const {Juguete} = require('../db/models');
 const {Marca} = require('../db/models')
 const {Pedido} = require('../db/models'); 
 const {Favorito} = require('../db/models')
+const {Carrito} = require('../db/models')
 
 const router = express.Router();
 
@@ -342,7 +343,9 @@ router.post("/guardar", async (req, res) => {
     console.error("Error al guardar el pedido:", error);
     res.status(500).json({ error: "No se pudo guardar el pedido" });
   }
-});
+}); 
+
+
 
 //favoritos
 router.post("/favorito", async (req, res) => {
@@ -433,5 +436,58 @@ router.delete("/favorito", async (req, res) => {
     res.status(500).json({ error: "No se pudo eliminar el juguete de favoritos." });
   }
 });
+
+router.get("/carrito/:usuarioId", async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+
+    const carrito = await Carrito.findAll({
+      where: { usuarioId },
+      include: [{ model: Juguete, as: "juguete" }],
+    });
+
+    res.json(carrito);
+  } catch (error) {
+    console.error("Error al obtener el carrito:", error);
+    res.status(500).json({ error: "No se pudo obtener el carrito" });
+  }
+});
+
+router.post("/carrito", async (req, res) => {
+  try {
+    console.log("Datos recibidos:", req.body); // 👀 Verifica los datos que llegan
+    const { usuarioId, jugueteId } = req.body;
+
+    if (!usuarioId || !jugueteId) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios." });
+    }
+
+    const nuevoItem = await Carrito.create({ usuarioId, jugueteId });
+    res.status(201).json({ mensaje: "Producto agregado al carrito", item: nuevoItem });
+  } catch (error) {
+    console.error("❌ Error en /carrito:", error); // Muestra el error en la terminal
+    res.status(500).json({ error: "No se pudo agregar al carrito" });
+  }
+});
+
+router.delete("/carrito", async (req, res) => {
+  try {
+    const { usuarioId, jugueteId } = req.body;
+
+    if (!usuarioId || !jugueteId) {
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    await Carrito.destroy({ where: { usuarioId, jugueteId } });
+
+    res.json({ mensaje: "Producto eliminado del carrito" });
+  } catch (error) {
+    console.error("Error al eliminar del carrito:", error);
+    res.status(500).json({ error: "No se pudo eliminar el producto del carrito" });
+  }
+});
+
+
+
 
 export default router;

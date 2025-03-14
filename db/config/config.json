@@ -2,7 +2,7 @@
     "development": {
       "database": "funtoys1",
       "username": "root",
-      "password": "123456789",
+      "password": "pppp",
       "host": "127.0.0.1",
       "port": 3306,
       "dialect": "mysql"
