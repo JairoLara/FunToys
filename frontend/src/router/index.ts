@@ -9,6 +9,7 @@ import Favoritos from '@/views/Favoritos.vue'
 import Admin from '@/views/admin/AdminProducts.vue'
 import AdminProductDetail from '@/views/admin/AdminProductDetail.vue'
 import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
+import AdminEstadisticas from '@/views/admin/AdminEstadisticas.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,7 +47,8 @@ const router = createRouter({
 
     { path: '/admin', name: 'admin', component: Admin, meta: { requiresAdmin: true } },
     { path: '/productadmin/:id', name: 'productadmin', component: AdminProductDetail, meta: { requiresAdmin: true } },
-    { path: '/productsbrands/:id', name: 'productsbrands', component: AdminProductsBrans, meta: { requiresAdmin: true } }
+    { path: '/productsbrands/:id', name: 'productsbrands', component: AdminProductsBrans, meta: { requiresAdmin: true } },
+    { path: '/adminest', name: 'adminest', component: AdminEstadisticas, meta: { requiresAdmin: true } }
   ]
 });
 
