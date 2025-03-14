@@ -340,12 +340,28 @@ router.post("/guardar", async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios." });
     }
 
+    // Buscar el juguete en la base de datos
+    const juguete = await Juguete.findByPk(jugueteId);
+    
+    if (!juguete) {
+      return res.status(404).json({ error: "Juguete no encontrado." });
+    }
+
+    // Verificar si hay suficiente stock
+    if (juguete.stock < cantidad) {
+      return res.status(400).json({ error: "Stock insuficiente." });
+    }
+
+    // Restar la cantidad del stock disponible
+    await juguete.update({ stock: juguete.stock - cantidad });
+
+    // Guardar el pedido en la base de datos
     const nuevoPedido = await Pedido.create({
       usuarioId,
       jugueteId,
       cantidad,
       total,
-      estadoEntrega: "en espera", 
+      estadoEntrega: "en espera",
       fecha: new Date()
     });
 
@@ -354,9 +370,7 @@ router.post("/guardar", async (req, res) => {
     console.error("Error al guardar el pedido:", error);
     res.status(500).json({ error: "No se pudo guardar el pedido" });
   }
-}); 
-
-
+});
 
 router.get("/pedidos/cliente/:usuarioId", async (req, res) => {
   const { usuarioId } = req.params;  // Recibimos el clienteId desde los parámetros de la URL

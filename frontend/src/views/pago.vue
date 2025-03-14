@@ -89,6 +89,17 @@ const precio = ref(route.query.precio ? Number(route.query.precio) : 0);
 
 const total = computed(() => cantidad.value * precio.value);
 
+const validarMes = () => {
+  const mesNum = Number(mes.value);
+  if (mesNum < 1 || mesNum > 12) {
+    alert("El mes de vencimiento debe estar entre 01 y 12.");
+    return false;
+  }
+  return true;
+};
+
+
+
 // Verificar si el usuario está autenticado
 const verificarUsuario = () => {
   if (!usuarioId.value) {
@@ -122,7 +133,7 @@ const guardarPedido = async () => {
     router.push({ name: "products" });
   } catch (error) {
     console.error("Error en la petición:", error.response ? error.response.data : error);
-    alert("No se pudo completar el pago. Revisa la consola.");
+    alert("Ya no quedan juguetes de este ");
   }
 };
 

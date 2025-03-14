@@ -77,17 +77,25 @@ const agregarAlCarrito = async () => {
   if (!producto.value) return;
 
   try {
-    const response = await axios.post("http://localhost:7000/api/carrito", {
+    await axios.post("http://localhost:7000/api/carrito", {
       usuarioId: Number(usuarioId.value),
       jugueteId: producto.value.id,
     });
 
     Swal.fire("Éxito", "El producto ha sido agregado al carrito.", "success");
+
+    // ✅ Redirigir a la vista del carrito pasando la cantidad seleccionada
+    router.push({
+      name: "carrito",
+      query: { cantidad: cantidad.value.toString() },
+    });
+
   } catch (error) {
     console.error("Error al agregar al carrito:", error);
     Swal.fire("Error", "Hubo un problema al agregar el producto al carrito.", "error");
   }
 };
+
 
 // Función para agregar a favoritos
 const agregarAFavoritos = async () => {

@@ -11,6 +11,7 @@ import Carrito from '@/views/Carrito.vue'
 import AdminProductDetail from '@/views/admin/AdminProductDetail.vue'
 import AdminProductsBrans from '@/views/admin/AdminProductsBrans.vue'
 import AdminEstadisticas from '@/views/admin/AdminEstadisticas.vue'
+import Pagocarrito from '@/views/Pagocarrito.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,14 @@ const router = createRouter({
     { path: '/favoritos',
       name: 'favoritos',
       component: Favoritos
+    },
+    { path: '/carrito',
+      name: 'carrito',
+      component: Carrito
+    },
+    { path: '/Pcarrito',
+      name: 'pcarrito',
+      component: Pagocarrito
     },
 
 
