@@ -5,8 +5,6 @@
 
     <div v-if="carrito.length > 0" class="productos-carrito">
       <div class="productos-wrapper">
-        <button @click="scrollLeft" class="scroll-btn left">‹</button>
-
         <div ref="productosContainer" class="productos-scroll">
           <div v-for="prod in carrito" :key="prod.id" class="producto">
             <img :src="prod.juguete.imagen" :alt="prod.juguete.nombre" class="producto-img" />
@@ -15,11 +13,9 @@
             <p class="precio">Precio: ${{ prod.juguete.precio }}</p>
             <p class="cantidad">Cantidad: {{ prod.cantidad }}</p>
             <p class="subtotal">Subtotal: ${{ prod.juguete.precio * prod.cantidad }}</p> 
-            <button @click="eliminarDelCarrito(prod.juguete.id)">Eliminar</button>
+            <button @click="eliminarDelCarrito(prod.juguete.id)" class="boton-eliminar" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
           </div>
         </div>
-
-        <button @click="scrollRight" class="scroll-btn right">›</button>
       </div>
 
       <p class="total">Total a pagar: ${{ totalCarrito }}</p>
@@ -152,74 +148,115 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.total {
-  font-size: 20px;
-  font-weight: bold;
-  color: #28a745;
-  margin-top: 20px;
-}
-
-.subtotal {
-  font-weight: bold;
-  color: #555;
-}
-
 .carrito-container {
-  background-color: #FFFFFF;
+  background-color: #fff;
   padding: 20px;
-  text-align: center;
+  text-align: left;
+  border-radius: 15px;
+  border: 2px solid #f0e68c; /* Color amarillo suave */
+  margin: auto;
 }
 
 h2 {
-  color: rgb(94, 94, 94);
-  font-size: 30px;
-  padding-bottom: 15px;
+  color: #5e5e5e;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .productos-carrito {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 10px;
 }
 
 .producto {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 250px;
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.producto-nombre, .producto-descripcion {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.producto img {
+  width: 60px;
+  height: auto;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.producto-info {
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+.producto-nombre {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
 }
 
 .producto-descripcion {
-  font-size: 14px;
-  color: #555;
+  font-size: 12px;
+  color: #777;
+}
+
+.cantidad-precio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cantidad-precio select {
+  padding: 4px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 .precio {
   font-weight: bold;
-  color: #ff6600;
+  color: #333;
 }
 
-button {
-  background-color: red;
-  color: white;
-  padding: 8px 12px;
+.boton-eliminar {
+  background: #ff5c5c;
   border: none;
-  border-radius: 5px;
+  padding: 8px;
+  border-radius: 50%;
   cursor: pointer;
+  font-size: 16px;
+  color: white;
+}
+
+.boton-eliminar:hover {
+  background: #e04040;
+}
+
+.total {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #333;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+}
+
+.boton-comprar {
+  background: #ff5c5c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
   margin-top: 10px;
 }
 
-button:hover {
-  background-color: darkred;
+.boton-comprar:hover {
+  background: #e04040;
 }
 </style>

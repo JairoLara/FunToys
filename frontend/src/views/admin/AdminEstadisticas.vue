@@ -1,8 +1,6 @@
 <template>
   <AdminNav />
   <div class="favoritos-container">
-    <h2>Estadísticas</h2>
-
     <!-- Lista de clientes -->
     <div v-if="clientes.length > 0" class="clientes-list">
       <h3>Clientes</h3>
@@ -14,7 +12,7 @@
     </div>
 
     <!-- Mostrar pedidos de un cliente -->
-    <div v-if="pedidos.length > 0" class="pedidos-list">
+    <div v-if="pedidosAbiertos && pedidos.length > 0" class="pedidos-list">
       <h3>Pedidos de {{ nombreCliente }}</h3>
 
       <div v-for="pedido in pedidos" :key="pedido.id" class="pedido-item">
@@ -40,7 +38,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import AdminNav from '@/components/admin/AdminNav.vue';
 
@@ -52,6 +50,7 @@ export default {
     const clientes = ref([]);
     const pedidos = ref([]);
     const nombreCliente = ref('');
+    const pedidosAbiertos = ref(false);
 
     const obtenerClientes = async () => {
       try {
@@ -66,6 +65,7 @@ export default {
       try {
         const response = await axios.get(`http://localhost:7000/api/pedidos/cliente/${clienteId}`);
         pedidos.value = response.data;
+        pedidosAbiertos.value = true; // Mostrar pedidos al seleccionar un cliente
         const cliente = clientes.value.find(c => c.id === clienteId);
         nombreCliente.value = cliente ? cliente.nombre : 'Cliente no encontrado';
       } catch (error) {
@@ -75,9 +75,8 @@ export default {
 
     const actualizarEstado = async (pedidoId, nuevoEstado) => {
       try {
-        // Haciendo la petición PUT al backend para actualizar el estado de entrega
         const response = await axios.put(`http://localhost:7000/api/pedidos/${pedidoId}`, {
-          estadoEntrega: nuevoEstado  // El estado que se seleccionó
+          estadoEntrega: nuevoEstado
         });
         console.log("Pedido actualizado:", response.data);
       } catch (error) {
@@ -85,18 +84,32 @@ export default {
       }
     };
 
-    onMounted(() => {
-      obtenerClientes();
-    });
-
     const seleccionarCliente = (clienteId) => {
       obtenerPedidosPorCliente(clienteId);
     };
+
+    const cerrarPedidos = (event) => {
+      // Verifica si el clic fue fuera de la lista de pedidos
+      if (!event.target.closest('.pedidos-list') && !event.target.closest('.clientes-list')) {
+        pedidosAbiertos.value = false;
+        pedidos.value = [];
+      }
+    };
+
+    onMounted(() => {
+      obtenerClientes();
+      document.addEventListener('click', cerrarPedidos);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener('click', cerrarPedidos);
+    });
 
     return {
       clientes,
       pedidos,
       nombreCliente,
+      pedidosAbiertos,
       seleccionarCliente,
       actualizarEstado
     };
@@ -106,23 +119,23 @@ export default {
 
 <style scoped>
 .favoritos-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   background-color: #FFFFFF;
   padding: 20px;
-  text-align: center;
-}
-
-h2 {
-  color: rgb(94, 94, 94);
-  font-size: 30px;
-  padding-bottom: 15px;
 }
 
 .clientes-list {
-  margin-bottom: 20px;
+  width: 250px;
+  background: #f0f0f0;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .clientes-list ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 
@@ -131,6 +144,7 @@ h2 {
 }
 
 .clientes-list button {
+  width: 100%;
   padding: 10px;
   background-color: #007BFF;
   color: white;
@@ -141,6 +155,12 @@ h2 {
 
 .clientes-list button:hover {
   background-color: #0056b3;
+}
+
+/* Contenedor de pedidos */
+.pedidos-list {
+  flex: 1;
+  margin-left: 20px;
 }
 
 .pedido-item {
@@ -154,14 +174,5 @@ h2 {
 .pedido-info {
   text-align: left;
   margin-bottom: 10px;
-}
-
-.estado-entrega {
-  margin-top: 10px;
-}
-
-select {
-  padding: 5px;
-  font-size: 14px;
 }
 </style>

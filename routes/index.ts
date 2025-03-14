@@ -373,29 +373,27 @@ router.post("/guardar", async (req, res) => {
 });
 
 router.get("/pedidos/cliente/:usuarioId", async (req, res) => {
-  const { usuarioId } = req.params;  // Recibimos el clienteId desde los parámetros de la URL
-
+  const { usuarioId } = req.params;  
   try {
-    // Filtrar pedidos por clienteId y recuperar la información relacionada
     const pedidos = await Pedido.findAll({
       where: {
-        usuarioId: usuarioId,  // Filtrar por clienteId
+        usuarioId: usuarioId,  
       },
       include: [
         {
           model: Usuario,
-          as: 'usuario',  // Usar el alias correcto según las asociaciones
-          attributes: ['id', 'nombre'],  // Recuperar el id y nombre del usuario
+          as: 'usuario',  
+          attributes: ['id', 'nombre'],  
         },
         {
           model: Juguete,
-          as: 'juguete',  // Usar el alias correcto según las asociaciones
-          attributes: ['id', 'nombre', 'precio'],  // Recuperar el id, nombre y precio del juguete
+          as: 'juguete',  
+          attributes: ['id', 'nombre', 'precio'],  
           include: [
             {
               model: Marca,
-              as: 'marca',  // Incluir la marca relacionada con el juguete
-              attributes: ['nombre', 'imagen'],  // Recuperar los detalles de la marca
+              as: 'marca',  
+              attributes: ['nombre', 'imagen'],  
             }
           ],
         },
@@ -406,7 +404,7 @@ router.get("/pedidos/cliente/:usuarioId", async (req, res) => {
       return res.status(404).json({ message: 'No se encontraron pedidos para este cliente.' });
     }
 
-    return res.status(200).json(pedidos);  // Devolver los pedidos encontrados
+    return res.status(200).json(pedidos);  
   } catch (error) {
     console.error("Error al obtener los pedidos:", error);
     return res.status(500).json({ error: "No se pudo obtener la lista de pedidos" });
