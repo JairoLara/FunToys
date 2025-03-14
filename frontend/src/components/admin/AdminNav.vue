@@ -39,6 +39,13 @@
             </li>
           </ul>
         </div>
+      </div>
+
+<div>
+  <AggProduct :mostrarModal="mostrarModal" :setMostrarModal="setMostrarModalAdmin" />
+
+  <RegisterAdmin :mostrarModal="mostrarModal" :setMostrarModal="setMostrarModalAdmin" />
+</div>
         <router-link to="/adminest">
           <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="34px" fill="#398e32"><path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-320l80 81v239h-80Zm160 0v-239l80-80v319h-80Zm160 0v-400l80-80v480h-80ZM120-327v-113l280-280 160 160 280-280v113L560-447 400-607 120-327Z"/></svg>
         </router-link>
@@ -70,20 +77,27 @@
 </div>
         </div>
       </div>
-    </div>
   </nav>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from 'vue-router';
+import AggProduct from '@/components/admin/AggProduct.vue'
+import RegisterAdmin from '@/components/admin/RegisterAdmin.vue'
 
 const router = useRouter();
+const mostrarModalAdmin = ref(false)
 
 interface Juguete {
   id: number;
   nombre: string;
   imagen: string;
+}
+
+// Cambiar el valor de mostrarModal para mostrar u ocultar el modal
+const setMostrarModalAdmin = (valor: boolean) => {
+  mostrarModalAdmin.value = valor
 }
 
 const searchQuery = ref("");
