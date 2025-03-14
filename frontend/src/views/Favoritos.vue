@@ -1,20 +1,32 @@
 <template>
   <NavBar />
   <div class="favoritos-container">
-    <h2>Mis Favoritos</h2>
+    <div class="titulo">
+      <h2>Mis Favoritos</h2>
+    </div>
+
 
     <div v-if="favoritos.length > 0" class="productos-favoritos">
       <div v-for="prod in favoritos" :key="prod.id" class="producto">
+       <div>
         <img :src="prod.juguete.imagen" :alt="prod.juguete.nombre" class="producto-img" />
-        <h3>{{ prod.juguete.nombre }}</h3>
-        <p>{{ prod.juguete.descripcion }}</p>
+       </div>
+        <div class="detail">
+          <h3>{{ prod.juguete.nombre }}</h3>
         <p class="precio">Precio: ${{ prod.juguete.precio }}</p>
-        <button @click="eliminarFavorito(prod.juguete.id)">Eliminar de favoritos</button>
+        </div>
+        <div class="delete">
+          <span style="cursor: pointer;" @click="eliminarFavorito(prod.juguete.id)" class="material-symbols-outlined">
+          <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z"/></svg>
+        </span>
+        </div>
+
       </div>
     </div>
 
     <p v-else class="mensaje">No tienes productos en favoritos.</p>
   </div>
+  <Footer />
 </template>
 
 <script setup lang="ts">
@@ -22,6 +34,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import NavBar from "@/components/NavBar.vue";
 import Swal from "sweetalert2";
+import Footer from "@/components/footer.vue";
 
 const usuario = ref<{ id: number; nombre: string; rol: string; token: string } | null>(null);
 const favoritos = ref<any[]>([]);
@@ -63,7 +76,7 @@ const cargarFavoritos = async () => {
     favoritos.value = response.data;
   } catch (error) {
     console.error("Error al cargar favoritos:", error);
-    Swal.fire("Error", "Hubo un problema al cargar tus favoritos.", "error");
+
   }
 };
 
@@ -97,60 +110,79 @@ onMounted(async () => {
 
 <style scoped>
 .favoritos-container {
-  background-color: #FFFFFF;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
   text-align: center;
 }
 
 h2 {
   color: rgb(94, 94, 94);
   font-size: 30px;
-  padding-bottom: 15px;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background-color: #f9f9f9;
+  margin-top: 12px;
 }
 
 .productos-favoritos {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
   justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  margin: 10px;
 }
 
 .producto {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 250px;
+  display: flex;
+  position: relative; /* Para que los elementos hijos con posición absoluta se ajusten a este contenedor */
+  padding: 12px;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  height: 130px;
+  width: 90%;
+}
+
+.delete {
+  position: absolute; /* Lo posiciona con respecto al .producto */
+  bottom: 10px; /* Lo pega a la parte inferior */
+  right: 10px; /* Lo alinea a la derecha */
 }
 
 .producto-img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
+  height: 100%;
+  width: 100px;
+
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  margin-left: 10px;
+
 }
 
 .precio {
+  align-self: flex-start;
   font-weight: bold;
   color: #ff6600;
 }
 
-button {
-  background-color: red;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: darkred;
-}
 
 .mensaje {
   font-size: 18px;
   color: gray;
 }
+
+
+
+
 </style>

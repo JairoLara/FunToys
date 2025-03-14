@@ -115,7 +115,7 @@ const agregarAFavoritos = async () => {
     Swal.fire("Éxito", "El producto ha sido agregado a favoritos.", "success");
   } catch (error) {
     console.error("Error al agregar a favoritos:", error);
-    Swal.fire("Error", "Hubo un problema al agregar el producto a favoritos.", "error");
+    Swal.fire("Ya esta en favoritos.", "", "error");
   }
 };
 
