@@ -19,7 +19,25 @@ router.get('/usuarios', async (req, res) => {
       return res.status(404).json({ message: 'No se encontraron usuarios.' });
     }
 
-    // Si hay usuarios, devolverlos en la respuesta
+    return res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+    return res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+});
+
+router.get('/clientes', async (req, res) => {
+  try {
+    const usuarios = await Usuario.findAll({
+      where: {
+        rol: 'comprador' 
+      }
+    });
+
+    if (usuarios.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron usuarios.' });
+    }
+
     return res.json(usuarios);
   } catch (error) {
     console.error('Error al obtener los usuarios:', error);
@@ -206,7 +224,6 @@ router.get('/:id/juguetes', async (req, res) => {
   try {
       const { id } = req.params;
       
-      // Buscar la marca y sus productos
       const marca = await Marca.findByPk(id, {
           include: { model: Juguete, as: 'juguetes' }
       });
@@ -237,7 +254,6 @@ router.put('/juguetes/:id', async (req, res) => {
       return res.status(404).json({ message: 'Juguete no encontrado' });
     }
 
-    // Actualizar el juguete con los nuevos datos
     await juguete.update({
       nombre,
       descripcion,
@@ -280,16 +296,12 @@ router.delete('/marca/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Buscar la marca
     const marca = await Marca.findByPk(id);
     if (!marca) {
       return res.status(404).json({ message: 'Marca no encontrada' });
     }
 
-    // Eliminar todos los productos de esa marca
     await Juguete.destroy({ where: { marcaId: id } });
-
-    // Eliminar la marca
     await Marca.destroy({ where: { id } });
 
     return res.json({ message: 'Marca y sus productos eliminados exitosamente' });
@@ -305,13 +317,11 @@ router.put('/marca/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, imagen } = req.body;
 
-    // Buscar la marca
     const marca = await Marca.findByPk(id);
     if (!marca) {
       return res.status(404).json({ message: 'Marca no encontrada' });
     }
 
-    // Actualizar la marca
     await marca.update({ nombre, imagen });
 
     return res.json({ message: 'Marca actualizada correctamente', marca });
@@ -321,6 +331,7 @@ router.put('/marca/:id', async (req, res) => {
   }
 });
 
+//pedidos
 router.post("/guardar", async (req, res) => {
   try {
     const { usuarioId, jugueteId, cantidad, total } = req.body;
@@ -334,7 +345,7 @@ router.post("/guardar", async (req, res) => {
       jugueteId,
       cantidad,
       total,
-      estadoEntrega: "en espera", // Estado inicial del pedido
+      estadoEntrega: "en espera", 
       fecha: new Date()
     });
 
@@ -347,17 +358,74 @@ router.post("/guardar", async (req, res) => {
 
 
 
+router.get("/pedidos/cliente/:usuarioId", async (req, res) => {
+  const { usuarioId } = req.params;  // Recibimos el clienteId desde los parámetros de la URL
+
+  try {
+    // Filtrar pedidos por clienteId y recuperar la información relacionada
+    const pedidos = await Pedido.findAll({
+      where: {
+        usuarioId: usuarioId,  // Filtrar por clienteId
+      },
+      include: [
+        {
+          model: Usuario,
+          as: 'usuario',  // Usar el alias correcto según las asociaciones
+          attributes: ['id', 'nombre'],  // Recuperar el id y nombre del usuario
+        },
+        {
+          model: Juguete,
+          as: 'juguete',  // Usar el alias correcto según las asociaciones
+          attributes: ['id', 'nombre', 'precio'],  // Recuperar el id, nombre y precio del juguete
+          include: [
+            {
+              model: Marca,
+              as: 'marca',  // Incluir la marca relacionada con el juguete
+              attributes: ['nombre', 'imagen'],  // Recuperar los detalles de la marca
+            }
+          ],
+        },
+      ],
+    });
+
+    if (pedidos.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron pedidos para este cliente.' });
+    }
+
+    return res.status(200).json(pedidos);  // Devolver los pedidos encontrados
+  } catch (error) {
+    console.error("Error al obtener los pedidos:", error);
+    return res.status(500).json({ error: "No se pudo obtener la lista de pedidos" });
+  }
+});
+
+router.put("/pedidos/:id", async (req, res) => {
+  try {
+    const { estadoEntrega } = req.body;
+    const pedido = await Pedido.findByPk(req.params.id);
+
+    if (!pedido) {
+      return res.status(404).json({ error: "Pedido no encontrado" });
+    }
+
+    pedido.estadoEntrega = estadoEntrega;
+    await pedido.save();
+
+    res.status(200).json(pedido);
+  } catch (error) {
+    console.error("Error al actualizar el pedido:", error);
+    res.status(500).json({ error: "No se pudo actualizar el pedido" });
+  }
+});
 //favoritos
 router.post("/favorito", async (req, res) => {
   try {
     const { usuarioId, jugueteId } = req.body;
 
-    // Validar que los campos necesarios estén presentes
     if (!usuarioId || !jugueteId) {
       return res.status(400).json({ error: "usuarioId y jugueteId son obligatorios." });
     }
 
-    // Verificar si el juguete ya está en favoritos
     const favoritoExistente = await Favorito.findOne({
       where: { usuarioId, jugueteId }
     });
@@ -366,13 +434,11 @@ router.post("/favorito", async (req, res) => {
       return res.status(400).json({ error: "El juguete ya está en favoritos." });
     }
 
-    // Crear el nuevo favorito
     const nuevoFavorito = await Favorito.create({
       usuarioId,
       jugueteId,
     });
 
-    // Responder con éxito
     res.status(201).json({ mensaje: "Juguete agregado a favoritos", favorito: nuevoFavorito });
   } catch (error) {
     console.error("Error al agregar a favoritos:", error);
@@ -398,7 +464,7 @@ router.get("/favoritos/:usuarioId", async (req, res) => {
       ],
     });
 
-    console.log("Favoritos encontrados:", favoritos); // 🔍 Verifica en consola
+    console.log("Favoritos encontrados:", favoritos); 
 
     if (favoritos.length === 0) {
       return res.status(404).json({ mensaje: "No tienes favoritos." });
@@ -419,7 +485,6 @@ router.delete("/favorito", async (req, res) => {
       return res.status(400).json({ error: "usuarioId y jugueteId son obligatorios." });
     }
 
-    // Buscar y eliminar el favorito
     const favorito = await Favorito.findOne({
       where: { usuarioId, jugueteId },
     });
@@ -428,7 +493,7 @@ router.delete("/favorito", async (req, res) => {
       return res.status(404).json({ error: "El juguete no está en favoritos." });
     }
 
-    await favorito.destroy(); // Elimina el favorito de la base de datos
+    await favorito.destroy();
 
     res.status(200).json({ mensaje: "Juguete eliminado de favoritos." });
   } catch (error) {

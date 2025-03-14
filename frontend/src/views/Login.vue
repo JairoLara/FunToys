@@ -70,12 +70,12 @@ const handleLogin = async () => {
 
       Swal.fire('Bienvenido', `Hola, ${data.nombre}`, 'success');
 
-      // Redirigir según el rol
       if (data.rol === 'admin') {
-        router.push('/admin');
+        router.replace('/admin');
       } else {
-        router.push('/');
+        router.replace('/');
       }
+
     } else {
       throw new Error("No se recibió el ID del usuario en la respuesta.");
     }
