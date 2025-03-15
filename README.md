@@ -22,4 +22,4 @@ REQUEST DE API: (opcional)
 
 //instalar npm install cors
 
-npm install sweetalert2 cors axios express
+npm install sweetalert2 cors axios express mitt jspdf

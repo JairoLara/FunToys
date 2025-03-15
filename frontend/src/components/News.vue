@@ -229,4 +229,8 @@ button {
   box-shadow: rgba(0, 0, 0, 0.4) 0px 10px 10px;
   transform: translateX(-50%); /* Centra el botón horizontalmente */
 }
+.marcas-grid:hover {
+    transform: scale(1.1);
+    transition-duration: .7s;
+}
 </style>

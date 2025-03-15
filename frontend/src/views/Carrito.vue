@@ -10,15 +10,16 @@
             <img :src="prod.juguete.imagen" :alt="prod.juguete.nombre" class="producto-img" />
             <h3 class="producto-nombre">{{ truncarTexto(prod.juguete.nombre, 20) }}</h3>
             <p class="producto-descripcion">{{ truncarTexto(prod.juguete.descripcion, 50) }}</p>
-            <p class="precio">Precio: ${{ prod.juguete.precio }}</p>
-            <p class="cantidad">Cantidad: {{ prod.cantidad }}</p>
+            <p class="precio">Precio: ${{ prod.juguete.precio }},</p>
+            <p class="cantidad">Cantidad: {{ prod.cantidad }},</p>
             <p class="subtotal">Subtotal: ${{ prod.juguete.precio * prod.cantidad }}</p> 
-            <button @click="eliminarDelCarrito(prod.juguete.id)" class="boton-eliminar" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
+            <button @click="eliminarDelCarrito(prod.juguete.id)" class="boton-eliminar" ><svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="34px" fill="#black"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
           </div>
         </div>
       </div>
 
-      <p class="total">Total a pagar: ${{ totalCarrito }}</p>
+      <p class="total">Total a pagar:</p>
+      <p class="totalp">${{ totalCarrito }}</p>
 
       <button class="boton-comprar" @click="comprar">Comprar</button>
     </div>
@@ -34,6 +35,7 @@ import NavBar from "@/components/NavBar.vue";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import { eventBus } from "@/eventBus";
 
 const usuario = ref<{ id: number; nombre: string; rol: string; token: string } | null>(null);
 const carrito = ref<any[]>([]);
@@ -153,7 +155,7 @@ onMounted(async () => {
   padding: 20px;
   text-align: left;
   border-radius: 15px;
-  border: 2px solid #f0e68c; /* Color amarillo suave */
+  border: 2px solid #f0e68c;
   margin: auto;
 }
 
@@ -172,13 +174,15 @@ h2 {
 
 .producto {
   display: flex;
+  gap: 13px;
   align-items: center;
   background: #fff;
+  margin-top: 10px;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 99%;
 }
 
 .producto img {
@@ -218,13 +222,14 @@ h2 {
 
 .precio {
   font-weight: bold;
-  color: #333;
+  color: darkgreen;
 }
 
 .boton-eliminar {
-  background: #ff5c5c;
+  background: transparent;
   border: none;
-  padding: 8px;
+  position: absolute;
+  right: 5%;
   border-radius: 50%;
   cursor: pointer;
   font-size: 16px;
@@ -232,16 +237,21 @@ h2 {
 }
 
 .boton-eliminar:hover {
-  background: #e04040;
+  fill: #e04040;
+  transition-duration: 0.5s;
 }
 
 .total {
   font-size: 18px;
   font-weight: bold;
-  margin-top: 20px;
   color: #333;
   padding: 10px 0;
   border-top: 1px solid #ddd;
+}
+.totalp{
+  font-size: 20px;
+  margin-top: -10px;
+  color: darkgreen;
 }
 
 .boton-comprar {
