@@ -10,16 +10,28 @@
             <img :src="prod.juguete.imagen" :alt="prod.juguete.nombre" class="producto-img" />
             <h3 class="producto-nombre">{{ truncarTexto(prod.juguete.nombre, 20) }}</h3>
             <p class="producto-descripcion">{{ truncarTexto(prod.juguete.descripcion, 50) }}</p>
-            <p class="precio">Precio: ${{ prod.juguete.precio }},</p>
-            <p class="cantidad">Cantidad: {{ prod.cantidad }},</p>
-            <p class="subtotal">Subtotal: ${{ prod.juguete.precio * prod.cantidad }}</p> 
-            <button @click="eliminarDelCarrito(prod.juguete.id)" class="boton-eliminar" ><svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="34px" fill="#black"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
+            <p class="precio">Precio: ${{ prod.juguete.precio }}</p>
+
+            <!-- Botones de incremento y decremento -->
+            <div class="cantidad-precio">
+              <button @click="decrementarCantidad(prod)" class="boton-cantidad">-</button>
+              <p class="cantidad">Cantidad: {{ prod.cantidad }}</p>
+              <button @click="incrementarCantidad(prod)" class="boton-cantidad">+</button>
+            </div>
+
+            <p class="subtotal">Subtotal: ${{ prod.juguete.precio * prod.cantidad }}</p>
+            <button @click="eliminarDelCarrito(prod.juguete.id)" class="boton-eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="34px" fill="#black">
+                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
 
       <p class="total">Total a pagar:</p>
-      <p class="totalp">${{ totalCarrito }}</p>
+      <p class="totalp">${{ totalCarrito.toFixed(2) }}</p>
+
 
       <button class="boton-comprar" @click="comprar">Comprar</button>
     </div>
@@ -33,9 +45,7 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import NavBar from "@/components/NavBar.vue";
 import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
-import { eventBus } from "@/eventBus";
+import { useRouter, useRoute } from "vue-router";
 
 const usuario = ref<{ id: number; nombre: string; rol: string; token: string } | null>(null);
 const carrito = ref<any[]>([]);
@@ -43,23 +53,15 @@ const productosContainer = ref<HTMLElement | null>(null);
 const router = useRouter();
 const route = useRoute();
 
-// Función para recortar texto
 const truncarTexto = (texto: string, limite: number) => {
   return texto.length > limite ? texto.substring(0, limite) + "..." : texto;
 };
 
-// Cargar usuario desde localStorage
 const cargarUsuario = () => {
   const usuario_id = localStorage.getItem("usuario_id");
   const usuario_nombre = localStorage.getItem("usuario_nombre");
   const usuario_rol = localStorage.getItem("usuario_rol");
   const token = localStorage.getItem("token") || '';
-
-  
-
-const route = useRoute();
-console.log("🔍 Parámetros de la URL:", route.query);
-
 
   if (usuario_id && usuario_nombre && usuario_rol) {
     usuario.value = {
@@ -68,61 +70,38 @@ console.log("🔍 Parámetros de la URL:", route.query);
       rol: usuario_rol,
       token: token
     };
-    console.log("✅ Usuario cargado correctamente:", usuario.value);
   } else {
     usuario.value = null;
-    console.warn("⚠️ No se encontró usuario en localStorage.");
   }
 };
 
-// Cargar carrito desde el backend
 const cargarCarrito = async () => {
-  if (!usuario.value) {
-    console.warn("No se puede cargar el carrito: usuario no definido");
-    return;
-  }
-
-  console.log("Cargando carrito para usuario ID:", usuario.value.id);
+  if (!usuario.value) return;
 
   try {
     const response = await axios.get(`http://localhost:7000/api/carrito/${usuario.value.id}`);
-    console.log("Respuesta del backend:", response.data);
-
-    // ✅ Obtener la cantidad de la URL con `route.query.cantidad`
-    const queryCantidad = Number(route.query.cantidad) || 1;
-
-    // ✅ Agregar la cantidad temporalmente sin guardarla en la base de datos
-    carrito.value = response.data.map((item: any) => ({
-      ...item,
-      cantidad: queryCantidad, // Usa la cantidad pasada por `router.query`
-    }));
-
+    carrito.value = response.data;
   } catch (error) {
     console.error("Error al cargar el carrito:", error);
     Swal.fire("Error", "Hubo un problema al cargar tu carrito.", "error");
   }
 };
 
-// **✅ Computed para calcular el total a pagar**
 const totalCarrito = computed(() => {
   return carrito.value.reduce((total, prod) => total + (prod.juguete.precio * prod.cantidad), 0);
 });
 
-// Comprar productos
 const comprar = () => {
   if (carrito.value.length === 0) {
     Swal.fire("Error", "Tu carrito está vacío.", "warning");
     return;
   }
-
   router.push({ 
     name: "pcarrito",
     query: { carrito: JSON.stringify(carrito.value) } 
   });
 };
 
-
-// Eliminar producto del carrito
 const eliminarDelCarrito = async (jugueteId: number) => {
   if (!usuario.value) return;
 
@@ -132,7 +111,6 @@ const eliminarDelCarrito = async (jugueteId: number) => {
     });
 
     carrito.value = carrito.value.filter((p) => p.juguete.id !== jugueteId);
-    console.log("Producto eliminado del carrito, lista actualizada");
     Swal.fire("Eliminado", "El producto ha sido eliminado de tu carrito.", "success");
   } catch (error) {
     console.error("Error al eliminar del carrito:", error);
@@ -140,7 +118,47 @@ const eliminarDelCarrito = async (jugueteId: number) => {
   }
 };
 
-// Asegurar carga secuencial del usuario antes del carrito
+// Funciones para aumentar y disminuir la cantidad de productos
+const incrementarCantidad = async (prod: any) => {
+  if (!usuario.value) return;
+
+  // Incrementar la cantidad localmente
+  prod.cantidad++;
+
+  try {
+    // Actualizar la cantidad en la base de datos
+    await axios.put("http://localhost:7000/api/carrito", {
+      usuarioId: usuario.value.id,
+      jugueteId: prod.juguete.id,
+      cantidad: prod.cantidad,
+    });
+
+  } catch (error) {
+    console.error("Error al incrementar cantidad:", error);
+    Swal.fire("Error", "Hubo un problema al actualizar la cantidad del producto.", "error");
+  }
+};
+
+const decrementarCantidad = async (prod: any) => {
+  if (!usuario.value || prod.cantidad <= 1) return;
+
+  // Decrementar la cantidad localmente
+  prod.cantidad--;
+
+  try {
+    // Actualizar la cantidad en la base de datos
+    await axios.put("http://localhost:7000/api/carrito", {
+      usuarioId: usuario.value.id,
+      jugueteId: prod.juguete.id,
+      cantidad: prod.cantidad,
+    });
+
+  } catch (error) {
+    console.error("Error al decrementar cantidad:", error);
+    Swal.fire("Error", "Hubo un problema al actualizar la cantidad del producto.", "error");
+  }
+};
+
 onMounted(async () => {
   await cargarUsuario();
   if (usuario.value) {
@@ -156,7 +174,6 @@ onMounted(async () => {
   text-align: left;
   border-radius: 15px;
   border: 2px solid #f0e68c;
-  margin: auto;
 }
 
 h2 {
@@ -182,7 +199,8 @@ h2 {
   border-radius: 8px;
   border: 1px solid #ddd;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  width: 99%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .producto img {
@@ -225,6 +243,18 @@ h2 {
   color: darkgreen;
 }
 
+.boton-cantidad {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.boton-cantidad:hover {
+  background-color: #ddd;
+}
+
 .boton-eliminar {
   background: transparent;
   border: none;
@@ -246,27 +276,69 @@ h2 {
   font-weight: bold;
   color: #333;
   padding: 10px 0;
-  border-top: 1px solid #ddd;
 }
-.totalp{
-  font-size: 20px;
-  margin-top: -10px;
-  color: darkgreen;
+
+.totalp {
+  font-size: 24px;
+  font-weight: bold;
+  color: #e04040;
+  padding-bottom: 10px;
 }
 
 .boton-comprar {
-  background: #ff5c5c;
+  padding: 10px;
+  background-color: #4caf50;
   color: white;
-  padding: 10px 15px;
   border: none;
-  border-radius: 20px;
-  cursor: pointer;
+  border-radius: 5px;
   font-size: 16px;
-  width: 100%;
+  cursor: pointer;
   margin-top: 10px;
 }
 
 .boton-comprar:hover {
-  background: #e04040;
+  background-color: #45a049;
+}
+
+.mensaje {
+  color: #777;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.productos-wrapper {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: start;
+}
+
+.productos-carrito {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.producto {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  background: #fff;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+
+
+.productos-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: hidden;
+  width: 100%; 
 }
 </style>

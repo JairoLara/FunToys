@@ -513,7 +513,7 @@ router.delete("/favorito", async (req, res) => {
     res.status(500).json({ error: "No se pudo eliminar el juguete de favoritos." });
   }
 });
-
+//carrito
 router.get("/carrito/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
@@ -532,18 +532,53 @@ router.get("/carrito/:usuarioId", async (req, res) => {
 
 router.post("/carrito", async (req, res) => {
   try {
-    console.log("Datos recibidos:", req.body); // 👀 Verifica los datos que llegan
-    const { usuarioId, jugueteId } = req.body;
+    console.log("Datos recibidos:", req.body);
+    const { usuarioId, jugueteId, cantidad } = req.body;
 
     if (!usuarioId || !jugueteId) {
       return res.status(400).json({ error: "Todos los campos son obligatorios." });
     }
 
-    const nuevoItem = await Carrito.create({ usuarioId, jugueteId });
-    res.status(201).json({ mensaje: "Producto agregado al carrito", item: nuevoItem });
+    // Buscar si el producto ya está en el carrito
+    let itemCarrito = await Carrito.findOne({ where: { usuarioId, jugueteId } });
+
+    if (itemCarrito) {
+      // Si ya está, aumentar la cantidad
+      itemCarrito.cantidad += cantidad || 1;
+      await itemCarrito.save();
+    } else {
+      // Si no está, agregarlo con la cantidad especificada
+      itemCarrito = await Carrito.create({ usuarioId, jugueteId, cantidad: cantidad || 1 });
+    }
+
+    res.status(201).json({ mensaje: "Producto agregado al carrito", item: itemCarrito });
   } catch (error) {
-    console.error("❌ Error en /carrito:", error); // Muestra el error en la terminal
+    console.error("❌ Error en /carrito:", error);
     res.status(500).json({ error: "No se pudo agregar al carrito" });
+  }
+});
+
+router.put("/carrito", async (req, res) => {
+  try {
+    const { usuarioId, jugueteId, cantidad } = req.body;
+
+    if (!usuarioId || !jugueteId || cantidad == null) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios." });
+    }
+
+    const itemCarrito = await Carrito.findOne({ where: { usuarioId, jugueteId } });
+
+    if (!itemCarrito) {
+      return res.status(404).json({ error: "Producto no encontrado en el carrito." });
+    }
+
+    itemCarrito.cantidad = cantidad;
+    await itemCarrito.save();
+
+    res.json({ mensaje: "Cantidad actualizada", item: itemCarrito });
+  } catch (error) {
+    console.error("Error al actualizar la cantidad:", error);
+    res.status(500).json({ error: "No se pudo actualizar la cantidad" });
   }
 });
 

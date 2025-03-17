@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
@@ -37,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
           model: "juguetes",
           key: "id",
         },
+      },
+      cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
       },
     },
     {
