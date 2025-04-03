@@ -127,7 +127,7 @@ const closeResults = (event: MouseEvent) => {
 };
 
 const irACarrito = () => {
-  router.push({ name: "carrito" }); // Redirige a la vista del carrito
+  router.push({ name: "carrito" }); 
 };
 
 const iradetalle = (id: number) => {
